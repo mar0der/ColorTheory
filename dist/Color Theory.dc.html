@@ -10,7 +10,7 @@
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Serif:ital@0;1&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -21,6 +21,8 @@ a:hover{text-decoration-thickness:2px}
 button{font-family:inherit}
 input[type=range]{-webkit-appearance:none;appearance:none;height:24px;background:transparent;cursor:pointer;color:var(--ink)}
 input[type=range]::-webkit-slider-runnable-track{height:2px;background:currentColor;opacity:.3}
+input[type=range][style*="background-image"]::-webkit-slider-runnable-track{height:10px;border-radius:999px;background:inherit;opacity:1}
+input[type=range][style*="background-image"]::-webkit-slider-thumb{margin-top:-4px;border:2px solid #fff;box-shadow:0 0 0 1px rgba(20,24,29,.4)}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-7px;border-radius:50%;background:currentColor}
 input[type=color]{-webkit-appearance:none;appearance:none;border:1px solid var(--line);border-radius:4px;width:52px;height:34px;padding:2px;background:transparent;cursor:pointer}
 input[type=color]::-webkit-color-swatch-wrapper{padding:0}
@@ -30,7 +32,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
 
 <div style="{{ rootStyle }}">
 
-<div style="position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--line)">
+<div style="{{ stickyStyle }}">
   <div style="max-width:1180px;margin:0 auto;padding:0 24px">
     <sc-if value="{{ isWide }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:20px">
@@ -92,16 +94,24 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
 
 <div style="max-width:1180px;margin:0 auto;padding:0 24px 80px">
 
+  <sc-if value="{{ standalone }}" hint-placeholder-val="{{ true }}">
   <div style="padding:16px 0 14px">
     <h1 style="margin:0 0 4px;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(24px,2.6vw,32px);line-height:1.1;letter-spacing:-.015em">{{ t.h1 }}</h1>
     <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.lead }}</p>
   </div>
+  </sc-if>
+  <sc-if value="{{ embedded }}" hint-placeholder-val="{{ false }}">
+    <div style="height:18px"></div>
+  </sc-if>
 
   <sc-if value="{{ isTab1 }}" hint-placeholder-val="{{ true }}">
+  <div style="margin-bottom:24px">
+    <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s1title }}</h2>
+    <p style="margin:6px 0 0;font-size:15px;line-height:1.5;color:var(--ink2);max-width:60ch;text-wrap:pretty">{{ hintCur }}</p>
+  </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:20px">
     <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:24px">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px 20px;flex-wrap:wrap;margin-bottom:16px">
-        <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:24px;line-height:1.1">{{ t.s1title }}</h2>
+      <div style="display:flex;justify-content:flex-end;align-items:center;gap:12px 20px;flex-wrap:wrap;margin-bottom:16px">
         <div style="display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none">
           <sc-for list="{{ modelModes }}" as="m" hint-placeholder-count="2">
             <button type="button" onClick="{{ m.select }}" style="{{ m.style }}">{{ m.label }}</button>
@@ -133,7 +143,6 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
         </sc-for>
       </div>
       <p style="margin:18px 0 0;font-size:12px;line-height:1.5;color:var(--ink3);text-wrap:pretty">{{ modelNote }}</p>
-      <p style="margin:6px 0 0;font-size:13px;line-height:1.5;color:var(--ink2);text-wrap:pretty">{{ hintCur }}</p>
     </div>
 
     <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:24px;display:flex;flex-direction:column;gap:18px">
@@ -171,12 +180,9 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
 
   <sc-if value="{{ isTab2 }}" hint-placeholder-val="{{ false }}">
   <div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:start;margin-bottom:24px">
-      <div>
-        <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">{{ t.s2eyebrow }}</div>
+    <div style="margin-bottom:24px">
         <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s2title }}</h2>
-      </div>
-      <p style="margin:0;font-size:15px;line-height:1.6;color:var(--ink2);max-width:52ch;text-wrap:pretty">{{ t.s2lead }}</p>
+      <p style="margin:6px 0 0;font-size:15px;line-height:1.5;color:var(--ink2);max-width:60ch;text-wrap:pretty">{{ t.s2lead }}</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:20px">
       <sc-for list="{{ families }}" as="f" hint-placeholder-count="3">
@@ -198,12 +204,14 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
   </sc-if>
 
   <sc-if value="{{ isTab3 }}" hint-placeholder-val="{{ false }}">
+  <div>
+  <div style="margin-bottom:24px">
+    <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s3title }}</h2>
+    <p style="margin:6px 0 0;font-size:15px;line-height:1.5;color:var(--ink2);max-width:60ch;text-wrap:pretty">{{ t.s3lead }}</p>
+  </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:24px;align-items:start">
     <div>
-      <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">{{ t.s3eyebrow }}</div>
-      <h2 style="margin:0 0 14px;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s3title }}</h2>
-      <p style="margin:0 0 26px;font-size:15px;line-height:1.6;color:var(--ink2);max-width:50ch;text-wrap:pretty">{{ t.s3lead }}</p>
-      <div style="border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:16px">
         <div>
           <div style="font-size:13px;font-weight:600;margin-bottom:10px">{{ t.pickBase }}</div>
           <div style="display:flex;align-items:center;gap:10px">
@@ -264,16 +272,14 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
       </div>
     </div>
   </div>
+  </div>
   </sc-if>
 
   <sc-if value="{{ isTab4 }}" hint-placeholder-val="{{ false }}">
   <div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:start;margin-bottom:24px">
-      <div>
-        <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--hot);margin-bottom:6px">{{ t.s4eyebrow }}</div>
+    <div style="margin-bottom:24px">
         <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s4title }}</h2>
-      </div>
-      <p style="margin:0;font-size:15px;line-height:1.6;color:var(--ink2);max-width:52ch;text-wrap:pretty">{{ t.s4lead }}</p>
+      <p style="margin:6px 0 0;font-size:15px;line-height:1.5;color:var(--ink2);max-width:60ch;text-wrap:pretty">{{ t.s4lead }}</p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px">
       <div style="border-radius:6px;padding:24px;background:#12161C;color:#F2EFE9">
@@ -369,58 +375,108 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
 
   <sc-if value="{{ isTab5 }}" hint-placeholder-val="{{ false }}">
   <div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:start;margin-bottom:24px">
-      <div>
-        <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">{{ t.s5eyebrow }}</div>
+    <div style="margin-bottom:24px">
         <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s5title }}</h2>
+      <p style="margin:6px 0 0;font-size:15px;line-height:1.5;color:var(--ink2);max-width:60ch;text-wrap:pretty">{{ t.s5lead }}</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+      <div style="display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none">
+        <sc-for list="{{ schemeModes }}" as="m" hint-placeholder-count="2">
+          <button type="button" onClick="{{ m.select }}" style="{{ m.style }}">{{ m.label }}</button>
+        </sc-for>
       </div>
-      <p style="margin:0;font-size:15px;line-height:1.6;color:var(--ink2);max-width:52ch;text-wrap:pretty">{{ t.s5lead }}</p>
+      <button type="button" onClick="{{ copyBase }}" title="{{ t.copyHint }}" style="display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border:1px solid var(--line);border-radius:999px;background:transparent;color:inherit;font:inherit;cursor:pointer" style-hover="border-color:var(--ink)">
+        <span style="width:26px;height:26px;border-radius:999px;background:{{ baseHex }}"></span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2)">{{ baseLabelCur }}</span>
+      </button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;margin-bottom:20px">
-      <sc-for list="{{ ringS }}" as="c" hint-placeholder-count="12">
-        <button type="button" onClick="{{ c.select }}" title="{{ c.name }}" style="height:34px;border:none;border-radius:2px;cursor:pointer;background:{{ c.hex }};outline:{{ c.ring }};outline-offset:2px"></button>
-      </sc-for>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px">
+    <sc-if value="{{ isWheelMode }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;margin-bottom:20px">
+        <sc-for list="{{ ringS }}" as="c" hint-placeholder-count="12">
+          <button type="button" onClick="{{ c.select }}" title="{{ c.name }}" style="height:34px;border:none;border-radius:2px;cursor:pointer;background:{{ c.hex }};outline:{{ c.ring }};outline-offset:2px"></button>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isFineMode }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px 20px;align-items:center;margin-bottom:20px;padding:16px 18px;border:1px solid var(--line);border-radius:6px;background:var(--surface)">
+        <div>
+          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">{{ t.baseLabel }}</div>
+          <input type="color" value="{{ baseHex }}" onChange="{{ setBaseHex }}">
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">
+            <span>{{ t.hueLabel }}</span><span style="font-family:'IBM Plex Mono',monospace;letter-spacing:0">{{ baseH }}°</span>
+          </div>
+          <input type="range" min="0" max="359" step="1" value="{{ baseH }}" onChange="{{ setBaseH }}" style="width:100%;background-image:{{ hueTrack }}">
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">
+            <span>{{ t.satLabel }}</span><span style="font-family:'IBM Plex Mono',monospace;letter-spacing:0">{{ baseS }}%</span>
+          </div>
+          <input type="range" min="0" max="100" step="1" value="{{ baseS }}" onChange="{{ setBaseS }}" style="width:100%;background-image:{{ satTrack }}">
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">
+            <span>{{ t.litLabel }}</span><span style="font-family:'IBM Plex Mono',monospace;letter-spacing:0">{{ baseL }}%</span>
+          </div>
+          <input type="range" min="8" max="92" step="1" value="{{ baseL }}" onChange="{{ setBaseL }}" style="width:100%;background-image:{{ litTrack }}">
+        </div>
+      </div>
+    </sc-if>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,196px),1fr));gap:14px">
       <sc-for list="{{ schemes }}" as="s" hint-placeholder-count="5">
         <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:18px;display:flex;flex-direction:column;gap:14px">
           <div>
             <h3 style="margin:0 0 6px;font-size:14px;font-weight:600">{{ s.title }}</h3>
             <p style="margin:0;font-size:12px;line-height:1.55;color:var(--ink3);text-wrap:pretty">{{ s.note }}</p>
           </div>
-          <div style="display:flex;gap:4px;height:70px;margin-top:auto">
+          <div style="display:flex;justify-content:center;margin-top:auto;padding:8px 0">
+            <div style="position:relative;width:100%;max-width:140px;aspect-ratio:1">
+              <sc-for list="{{ s.segs }}" as="g" hint-placeholder-count="12">
+                <div title="{{ g.name }}" style="{{ g.style }}"></div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex;gap:2px">
             <sc-for list="{{ s.colors }}" as="c" hint-placeholder-count="3">
-              <button type="button" onClick="{{ c.copy }}" title="{{ c.name }}" style="flex:1;border:none;border-radius:4px;cursor:pointer;background:{{ c.hex }}"></button>
+              <button type="button" onClick="{{ c.copy }}" title="{{ c.name }}" style="flex:1;min-width:0;height:22px;padding:0 1px;border:none;border-radius:3px;cursor:pointer;background:{{ c.hex }};color:{{ c.fg }};font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:-.04em;white-space:nowrap;overflow:hidden;text-overflow:clip">{{ c.label }}</button>
             </sc-for>
           </div>
+
         </div>
       </sc-for>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:20px;margin-top:28px">
-      <div>
-        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
-          <span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)">{{ t.before }}</span>
-          <span style="font-size:12px;color:var(--ink3)">{{ t.beforeNote }}</span>
-        </div>
-        <div style="border:1px solid var(--line);border-radius:6px;padding:26px;background:{{ demoBefore.bg }};color:{{ demoBefore.ink }}">
-          <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;color:{{ demoBefore.eyebrow }}">{{ t.demoEyebrow }}</div>
-          <div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:28px;line-height:1.1;margin-bottom:10px">{{ t.demoTitle }}</div>
-          <div style="font-size:13px;line-height:1.6;margin-bottom:18px">{{ t.demoBody }}</div>
-          <span style="display:inline-block;font-size:13px;padding:9px 18px;border-radius:5px;background:{{ demoBefore.accent }};color:{{ demoBefore.accentInk }}">{{ t.demoCta }}</span>
-        </div>
+    <div style="margin-top:36px;padding-top:24px;border-top:1px solid var(--line)">
+      <h3 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:26px;line-height:1.1">{{ t.demoRowTitle }}</h3>
+      <p style="margin:6px 0 20px;font-size:14px;line-height:1.5;color:var(--ink2);max-width:60ch;text-wrap:pretty">{{ t.demoRowLead }}</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,196px),1fr));gap:14px">
+        <sc-for list="{{ schemes }}" as="s" hint-placeholder-count="5">
+          <div style="border:1px solid var(--line);border-radius:6px;overflow:hidden">
+            <div style="padding:18px 16px;background:{{ s.demo.bg }}">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
+                <span style="width:22px;height:4px;border-radius:999px;background:{{ s.demo.rule }}"></span>
+                <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:{{ s.demo.sub }}">{{ t.demoEyebrow }}</span>
+              </div>
+              <div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:21px;line-height:1.12;margin-bottom:8px;color:{{ s.demo.ink }}">{{ t.demoTitle }}</div>
+              <div style="font-size:12px;line-height:1.55;margin-bottom:14px;color:{{ s.demo.sub }}">{{ t.demoBody }}</div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span style="font-size:12px;padding:8px 14px;border-radius:5px;background:{{ s.demo.accent }};color:{{ s.demo.accentInk }}">{{ t.demoCta }}</span>
+                <span style="font-size:11px;padding:5px 10px;border-radius:999px;background:{{ s.demo.chip }};color:{{ s.demo.chipInk }}">{{ t.demoTag }}</span>
+              </div>
+            </div>
+            <div style="padding:10px 14px;border-top:1px solid var(--line);background:var(--surface)">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px">
+                <span style="font-size:12px;font-weight:600">{{ s.title }}</span>
+                <span style="font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:{{ s.demo.verdictTone }}">{{ s.demo.verdictLabel }}</span>
+              </div>
+              <div style="font-size:11px;line-height:1.45;color:var(--ink2);text-wrap:pretty">{{ s.demo.verdictReason }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink2);margin-top:4px">{{ s.demo.verdictMeta }}</div>
+              <button type="button" onClick="{{ s.demo.copyPayload }}" style="width:100%;height:30px;margin-top:9px;border:1px solid var(--line);border-radius:5px;background:transparent;color:inherit;font:inherit;font-size:11px;cursor:pointer" style-hover="border-color:var(--ink)">{{ s.demo.copyLabel }}</button>
+            </div>
+          </div>
+        </sc-for>
       </div>
-      <div>
-        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
-          <span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">{{ t.after }}</span>
-          <span style="font-size:12px;color:var(--ink3)">{{ t.afterNote }}</span>
-        </div>
-        <div style="border:1px solid var(--line);border-radius:6px;padding:26px;background:{{ demoAfter.bg }};color:{{ demoAfter.ink }}">
-          <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;color:{{ demoAfter.eyebrow }}">{{ t.demoEyebrow }}</div>
-          <div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:28px;line-height:1.1;margin-bottom:10px">{{ t.demoTitle }}</div>
-          <div style="font-size:13px;line-height:1.6;margin-bottom:18px">{{ t.demoBody }}</div>
-          <span style="display:inline-block;font-size:13px;padding:9px 18px;border-radius:5px;background:{{ demoAfter.accent }};color:{{ demoAfter.accentInk }}">{{ t.demoCta }}</span>
-        </div>
-      </div>
+      <p style="margin:14px 0 0;font-size:12px;line-height:1.5;color:var(--ink3);text-wrap:pretty">{{ t.demoRowNote }}</p>
     </div>
   </div>
   </sc-if>
@@ -429,8 +485,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
   <div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:end;margin-bottom:24px">
       <div>
-        <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--hot);margin-bottom:6px">{{ t.s6eyebrow }}</div>
-        <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s6title }}</h2>
+            <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s6title }}</h2>
       </div>
       <div style="display:flex;align-items:baseline;gap:16px;justify-content:flex-end;flex-wrap:wrap">
         <span style="font-family:'IBM Plex Mono',monospace;font-size:15px">{{ quizScore }}</span>
@@ -542,6 +597,8 @@ const T = {
     s5eyebrow:'05 / Подреди ги', s5title:'Цветови схеми',
     s5lead:'Избери нюанс и виж петте класически съотношения, изчислени спрямо него.',
     schemes:['Комплементарна','Аналогична','Триадична','Разделно-комплементарна','Тетрадична'],
+    pickerModes:['12 нюанса','Свободен избор'],
+    hueLabel:'Нюанс', satLabel:'Наситеност', litLabel:'Светлота', baseLabel:'Основен цвят',
     schemeNotes:['Два срещуположни нюанса. Максимално напрежение — използвай втория пестеливо.',
       'Три съседни нюанса. Спокойна палитра, лесно се разчита.',
       'Три равномерно отдалечени нюанса. Живо, но балансирано.',
@@ -550,7 +607,20 @@ const T = {
     before:'Преди', beforeNote:'три цвята с еднаква сила',
     after:'След', afterNote:'60 / 30 / 10 от схемата',
     demoEyebrow:'Изложба', demoTitle:'Пигмент и хартия', 
-    demoBody:'Един и същ текст, една и съща подредба. Различава се само разпределението на цвета.',
+    demoBody:'Един и същ текст, една и съща подредба. Различава се само схемата.',
+    demoTag:'Ново',
+    demoRowTitle:'Как изглежда в дизайн',
+    demoRowLead:'Една и съща картичка, оцветена по всяка от петте схеми — от избрания нюанс.',
+    demoRowNote:'Разпределението е еднакво навсякъде: 60% светъл фон, 30% текст, 10% акцент. Различава се само коя схема дава цветовете.',
+    vGood:'Работи', vOk:'Приемливо', vBad:'Слабо', copyForAI:'Копирай палитрата (JSON)', copyAll:'Копирай всички',
+    vReasonGood:'Контрастът, акцентът и четимостта са наред.',
+    vReasons:{
+      lowText:'Текстът няма достатъчен контраст спрямо фона.',
+      lowBtn:'Надписът върху бутона не се чете добре.',
+      lowAccent:'Акцентът се губи във фона.',
+      vibrate:'Цветовете вибрират — еднакво наситени и еднакво светли.',
+      cbRisk:'Двата цвята се сливат при цветна слепота.'
+    },
     demoCta:'Виж програмата',
     s6eyebrow:'06 / Провери се', s6title:'Пет въпроса', reset:'Започни отначало',
     score:'Резултат',
@@ -617,6 +687,8 @@ const T = {
     s5eyebrow:'05 / Arrange them', s5title:'Colour schemes',
     s5lead:'Pick a hue and see the five classic relationships calculated against it.',
     schemes:['Complementary','Analogous','Triadic','Split-complementary','Tetradic'],
+    pickerModes:['12 hues','Free pick'],
+    hueLabel:'Hue', satLabel:'Saturation', litLabel:'Lightness', baseLabel:'Base colour',
     schemeNotes:['Two opposite hues. Maximum tension — use the second one sparingly.',
       'Three neighbouring hues. A calm palette, easy to read.',
       'Three evenly spaced hues. Lively but balanced.',
@@ -625,7 +697,20 @@ const T = {
     before:'Before', beforeNote:'three colours at equal strength',
     after:'After', afterNote:'60 / 30 / 10 from the scheme',
     demoEyebrow:'Exhibition', demoTitle:'Pigment and paper',
-    demoBody:'The same text, the same layout. Only the distribution of colour differs.',
+    demoBody:'The same text, the same layout. Only the scheme differs.',
+    demoTag:'New',
+    demoRowTitle:'How it looks in a design',
+    demoRowLead:'The same card coloured by each of the five schemes, from the selected hue.',
+    demoRowNote:'The distribution is identical everywhere: 60% light ground, 30% text, 10% accent. Only the scheme supplying the colours changes.',
+    vGood:'Works', vOk:'Acceptable', vBad:'Weak', copyForAI:'Copy palette (JSON)', copyAll:'Copy all',
+    vReasonGood:'Contrast, accent and legibility all hold.',
+    vReasons:{
+      lowText:'The text lacks contrast against the ground.',
+      lowBtn:'The button label is hard to read.',
+      lowAccent:'The accent disappears into the ground.',
+      vibrate:'The colours vibrate — same saturation, same lightness.',
+      cbRisk:'The two colours merge under colour blindness.'
+    },
     demoCta:'See the programme',
     s6eyebrow:'06 / Check yourself', s6title:'Five questions', reset:'Start again',
     score:'Score',
@@ -653,6 +738,31 @@ const THEMES = {
 function rgb(hex){ const h=hex.replace('#',''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
 function hex(a){ return '#'+a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('').toUpperCase(); }
 function mixTo(h,target,t){ const a=rgb(h),b=rgb(target); return hex(a.map((v,i)=>v+(b[i]-v)*t)); }
+function lin(v){ const x=v/255; return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4); }
+function unlin(v){ const x=v<=0.0031308?v*12.92:1.055*Math.pow(Math.max(v,0),1/2.4)-0.055; return Math.max(0,Math.min(255,x*255)); }
+function deuter(h){ const [r,g,b]=rgb(h).map(lin);
+  return hex([unlin(.625*r+.375*g), unlin(.7*r+.3*g), unlin(.3*g+.7*b)]); }
+function dist(a,b){ const x=rgb(a),y=rgb(b); return Math.sqrt(Math.pow(x[0]-y[0],2)+Math.pow(x[1]-y[1],2)+Math.pow(x[2]-y[2],2)); }
+function auditPalette(d, members){
+  const textCr = ratioOf(d.ink, d.bg), btnCr = ratioOf(d.accentInk, d.accent), accCr = ratioOf(d.accent, d.bg);
+  const ls = members.map(h => hsl(h).l), spread = Math.max.apply(null, ls) - Math.min.apply(null, ls);
+  const sats = members.map(h => hsl(h).s);
+  const vibrate = Math.min.apply(null, sats) > 78 && spread < 12;
+  const cb = members.length > 1 && dist(deuter(members[0]), deuter(members[1])) < 26;
+  const fails = [];
+  if(textCr < 4.5) fails.push('lowText');
+  if(btnCr < 4.5) fails.push('lowBtn');
+  if(accCr < 2.2) fails.push('lowAccent');
+  if(vibrate) fails.push('vibrate');
+  if(cb) fails.push('cbRisk');
+  return { fails, textCr, accCr, spread: Math.round(spread) };
+}
+function hslHex(h,s,l){ h=((h%360)+360)%360; s/=100; l/=100;
+  const c=(1-Math.abs(2*l-1))*s, x=c*(1-Math.abs((h/60)%2-1)), m=l-c/2;
+  let r,g,b;
+  if(h<60){r=c;g=x;b=0} else if(h<120){r=x;g=c;b=0} else if(h<180){r=0;g=c;b=x}
+  else if(h<240){r=0;g=x;b=c} else if(h<300){r=x;g=0;b=c} else {r=c;g=0;b=x}
+  return hex([(r+m)*255,(g+m)*255,(b+m)*255]); }
 function hsl(h){ const [r,g,b]=rgb(h).map(v=>v/255); const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn; let H=0;
   if(d){ if(mx===r)H=((g-b)/d+(g<b?6:0)); else if(mx===g)H=(b-r)/d+2; else H=(r-g)/d+4; H*=60; }
   const L=(mx+mn)/2, S=d?d/(1-Math.abs(2*L-1)):0;
@@ -675,6 +785,7 @@ class Component extends DCLogic {
       w: typeof window === 'undefined' ? 1200 : window.innerWidth, menuOpen: false, model: 'sub',
       simA: 8, simB: 4, ratio: 50,
       monoHex: '#2355D9', monoMode: 0,
+      schemeMode: 'wheel', baseH: 212, baseS: 72, baseL: 50,
       cFg: 0, cBg: 4,
       quiz: {}, copied: ''
     };
@@ -703,7 +814,25 @@ class Component extends DCLogic {
   toggleTheme = () => this.setState(s => { const th = s.theme === 'dark' ? 'light' : 'dark'; this.persist({ lang: s.lang, theme: th }); return { theme: th }; });
 
   flash(key){ this.setState({ copied: key }); clearTimeout(this._ct); this._ct = setTimeout(() => this.setState({ copied: '' }), 1400); }
-  clip(text, key){ try{ navigator.clipboard.writeText(text); }catch(e){} this.flash(key); }
+  clip(text, key){
+    const legacy = () => {
+      try{
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+        document.body.appendChild(ta);
+        ta.select(); ta.setSelectionRange(0, text.length);
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }catch(e){}
+    };
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).catch(legacy);
+      } else legacy();
+    }catch(e){ legacy(); }
+    this.flash(key);
+  }
 
   pick(i){
     this.setState(s => {
@@ -811,12 +940,61 @@ class Component extends DCLogic {
 
     const simAHex = W[s.simA].hex, simBHex = W[s.simB].hex, rt = s.ratio/100;
 
+    const vTones = s.theme === 'dark' ? { good:'#6ED49E', warn:'#E5A63B' } : { good:'#1F6B48', warn:'#8A5606' };
+    const fine = s.schemeMode === 'fine';
+    const ringHex = fine ? Array.from({length:12}, (_, i) => hslHex(s.baseH + i*30, s.baseS, s.baseL)) : W.map(c => c.hex);
+    const ringName = i => fine ? ringHex[i] : name(i);
+    const baseIdx = fine ? 0 : s.sel;
+    const baseHex = ringHex[baseIdx];
+
     const schemeSets = [[0,6],[-1,0,1],[0,4,8],[0,5,7],[0,3,6,9]];
-    const schemes = schemeSets.map((offs, k) => ({
-      title: t.schemes[k], note: t.schemeNotes[k],
-      colors: offs.map(o => { const i = ((s.sel + o) % 12 + 12) % 12;
-        return { hex: W[i].hex, name: name(i), copy: () => this.clip(W[i].hex, 'sch') }; })
-    }));
+    const schemes = schemeSets.map((offs, k) => {
+      const members = offs.map(o => ((baseIdx + o) % 12 + 12) % 12);
+      return {
+        title: t.schemes[k], note: t.schemeNotes[k],
+        colors: members.map(i => {
+          const hx = ringHex[i], key = 'sw' + k + '-' + i;
+          return { hex: hx, name: ringName(i), fg: ink(hx),
+            label: s.copied === key ? t.copied : hx.replace('#', '').toUpperCase(),
+            copy: () => this.clip(hx.toUpperCase(), key) };
+        }),
+        copyAll: () => this.clip(members.map(i => ringHex[i].toUpperCase()).join(', '), 'all' + k),
+        copyAllLabel: s.copied === ('all' + k) ? t.copied : t.copyAll,
+        demo: (() => {
+          const c0 = ringHex[members[0]], c1 = ringHex[members[1] === undefined ? members[0] : members[1]];
+          const c2 = ringHex[members[2] === undefined ? members[1] : members[2]];
+          const acc = c1;
+          const d = { bg: mixTo(c0, '#FFFFFF', .9), ink: mixTo(c0, '#000000', .66), sub: mixTo(c0, '#000000', .42),
+            accent: acc, accentInk: ink(acc), chip: c2, chipInk: ink(c2), rule: c0 };
+          const a = auditPalette(d, members.map(i => ringHex[i]));
+          const n = a.fails.length;
+          d.verdictLabel = n === 0 ? t.vGood : (n === 1 ? t.vOk : t.vBad);
+          d.verdictTone = n === 0 ? vTones.good : (n === 1 ? vTones.warn : th.hot);
+          d.verdictReason = n === 0 ? t.vReasonGood : t.vReasons[a.fails[0]];
+          d.verdictMeta = 'AA ' + a.textCr.toFixed(1) + ':1 · ΔL ' + a.spread;
+          const payload = JSON.stringify({
+            scheme: T.en.schemes[k],
+            base: ringHex[members[0]].toUpperCase(),
+            hues: members.map(i => ringHex[i].toUpperCase()),
+            roles: {
+              background: d.bg.toUpperCase(), heading: d.ink.toUpperCase(), body: d.sub.toUpperCase(),
+              accent: d.accent.toUpperCase(), onAccent: d.accentInk.toUpperCase(), tag: d.chip.toUpperCase()
+            },
+            distribution: '60% background / 30% text / 10% accent',
+            textContrast: a.textCr.toFixed(2) + ':1',
+            notes: a.fails.length ? a.fails.map(f => T.en.vReasons[f]).join(' ') : 'Passes contrast, accent and colour-blind checks.'
+          }, null, 2);
+          d.copyPayload = () => this.clip(payload, 'json' + k);
+          d.copyLabel = s.copied === ('json' + k) ? t.copied : t.copyForAI;
+          return d;
+        })(),
+        segs: ringHex.map((hx, i) => {
+          const on = members.indexOf(i) >= 0;
+          return { hex: hx, name: ringName(i),
+            style: `position:absolute;inset:0;transform:rotate(${i*30}deg) translateY(${on ? -8 : 0}px);background:${hx};opacity:${on ? 1 : .18};clip-path:polygon(50% 50%, 33.9% -10%, 66.1% -10%);-webkit-mask:radial-gradient(circle at 50% 50%,#000 0 50%,transparent 50.5%);mask:radial-gradient(circle at 50% 50%,#000 0 50%,transparent 50.5%);transition:transform 160ms cubic-bezier(.2,0,.2,1),opacity 160ms cubic-bezier(.2,0,.2,1)` };
+        })
+      };
+    });
 
     const cIdx = o => ((s.sel + o) % 12 + 12) % 12;
     const lead = W[s.sel].hex, second = W[cIdx(5)].hex, third = W[cIdx(6)].hex;
@@ -853,7 +1031,7 @@ class Component extends DCLogic {
       setBg: () => this.setLang('bg'), setEn: () => this.setLang('en'),
       toggleTheme: this.toggleTheme,
       themeDotStyle: `width:11px;height:11px;border-radius:50%;background:${s.theme === 'dark' ? th.ink : 'transparent'};border:1.5px solid ${th.ink2}`,
-      standalone: !emb,
+      standalone: !emb, embedded: emb,
       stickyStyle: `position:sticky;top:${emb ? (this.props.stickyTop || 55) : 0}px;z-index:30;background:${th.bg};border-bottom:1px solid ${th.line}`,
       tabs, isWide: !narrow, isNarrow: narrow, menuOpen: s.menuOpen,
       current: { num: '0' + (s.tab + 1), label: t.tabs[s.tab] },
@@ -910,6 +1088,23 @@ class Component extends DCLogic {
       mixPigment: { hex: mixPigmentHex(simAHex, simBHex, rt) },
 
       ringS: ringFor(s.sel, i => this.setState({ sel: i })),
+      isWheelMode: !fine, isFineMode: fine,
+      schemeModes: t.pickerModes.map((label, i) => {
+        const on = (i === 1) === fine;
+        return { label, select: () => this.setState({ schemeMode: i === 1 ? 'fine' : 'wheel' }),
+          style: `height:32px;padding:0 16px;border:none;cursor:pointer;font-size:13px;background:${on?th.ink:'transparent'};color:${on?th.bg:th.ink2}` };
+      }),
+      baseHex, baseHexUpper: baseHex.toUpperCase(),
+      copyBase: () => this.clip(baseHex.toUpperCase(), 'base'),
+      baseLabelCur: s.copied === 'base' ? t.copied : baseHex.toUpperCase(),
+      baseH: s.baseH, baseS: s.baseS, baseL: s.baseL,
+      setBaseHex: e => { const v = e.target.value, c = hsl(v); this.setState({ baseH: c.h, baseS: c.s, baseL: c.l }); },
+      setBaseH: e => this.setState({ baseH: Number(e.target.value) }),
+      setBaseS: e => this.setState({ baseS: Number(e.target.value) }),
+      setBaseL: e => this.setState({ baseL: Number(e.target.value) }),
+      hueTrack: 'linear-gradient(to right,' + Array.from({length:13}, (_, i) => hslHex(i*30, s.baseS, s.baseL)).join(',') + ')',
+      satTrack: 'linear-gradient(to right,' + hslHex(s.baseH, 0, s.baseL) + ',' + hslHex(s.baseH, 100, s.baseL) + ')',
+      litTrack: 'linear-gradient(to right,#000000,' + hslHex(s.baseH, s.baseS, 50) + ',#FFFFFF)',
       schemes, demoBefore, demoAfter,
 
       quiz, quizScore: t.score + ' ' + correct + ' / ' + t.quiz.length,
@@ -920,6 +1115,4 @@ class Component extends DCLogic {
 </script>
 </body>
 </html>
-
-
 

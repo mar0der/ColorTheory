@@ -13,7 +13,7 @@
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -25,7 +25,7 @@ a:hover{text-decoration-thickness:2px}
 
 <div style="{{ rootStyle }}">
 
-  <div style="position:sticky;top:0;z-index:50;background:{{ bgc }};border-bottom:1px solid {{ line }}">
+  <div ref="{{ headRef }}" style="position:sticky;top:0;z-index:50;background:{{ bgc }};border-bottom:1px solid {{ line }}">
     <div style="max-width:1180px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
       <div style="display:flex;align-items:center;gap:20px;min-width:0;flex-wrap:wrap">
         <span style="font-family:'IBM Plex Serif',Georgia,serif;font-size:20px;line-height:1.1;white-space:nowrap">{{ title }}</span>
@@ -51,7 +51,7 @@ a:hover{text-decoration-thickness:2px}
   </div>
 
   <div style="display:{{ theoryDisplay }}">
-    <dc-import name="Color Theory" embedded="{{ true }}" lang="{{ lang }}" theme="{{ theme }}" hint-size="100%,900px"></dc-import>
+    <dc-import name="Color Theory" embedded="{{ true }}" lang="{{ lang }}" theme="{{ theme }}" sticky-top="{{ headH }}" hint-size="100%,900px"></dc-import>
   </div>
   <div style="display:{{ practiceDisplay }}">
     <dc-import name="Color Theory Lesson" embedded="{{ true }}" lang="{{ lang }}" theme="{{ theme }}" big="{{ big }}" hint-size="100%,900px"></dc-import>
@@ -68,10 +68,27 @@ const TXT = {
 class Component extends DCLogic {
   constructor(props){
     super(props);
-    this.state = { lang:'bg', theme:'light', mode:0, big:false };
+    this.state = { lang:'bg', theme:'light', mode:0, big:false, headH:55 };
+    this.headRef = React.createRef();
+  }
+
+  measure = () => {
+    const el = this.headRef.current;
+    if(el && el.offsetHeight && el.offsetHeight !== this.state.headH) this.setState({ headH: el.offsetHeight });
+  };
+
+  componentWillUnmount(){
+    if(this._ro) this._ro.disconnect();
+    window.removeEventListener('resize', this.measure);
   }
 
   componentDidMount(){
+    this.measure();
+    window.addEventListener('resize', this.measure);
+    if(typeof ResizeObserver !== 'undefined' && this.headRef.current){
+      this._ro = new ResizeObserver(this.measure);
+      this._ro.observe(this.headRef.current);
+    }
     try{
       const raw = localStorage.getItem('ct_hub');
       if(raw){ const p = JSON.parse(raw);
@@ -100,6 +117,7 @@ class Component extends DCLogic {
     return {
       rootStyle: `background:${bgc};color:${ink};min-height:100vh;font-family:'IBM Plex Sans',system-ui,sans-serif`,
       title: t.title, bgc, line, lang: s.lang, theme: s.theme, big: s.big,
+      headRef: this.headRef, headH: s.headH,
       modes: [tab(t.theory, 0), tab(t.practice, 1)],
       isPractice: s.mode === 1,
       theoryDisplay: s.mode === 0 ? 'block' : 'none',
@@ -119,6 +137,4 @@ class Component extends DCLogic {
 </script>
 </body>
 </html>
-
-
 
