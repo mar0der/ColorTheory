@@ -1,0 +1,12 @@
+services:
+  web:
+    build: .
+    container_name: color-theory-web
+    restart: unless-stopped
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
+    name: web_network

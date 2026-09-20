@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0d12" />
+    <meta name="description" content="An interactive bilingual studio for learning color theory." />
+    <title>Hue / Нюанс — Color theory studio</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Hue home">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span><strong>HUE</strong><small>/ НЮАНС</small></span>
+        </a>
+        <nav class="topnav" aria-label="Primary navigation">
+          <a href="#lab" data-i18n="navLab">Color lab</a>
+          <a href="#principles" data-i18n="navPrinciples">Principles</a>
+        </nav>
+        <button class="language-toggle" id="languageToggle" type="button" aria-label="Switch language">
+          <span class="language-option is-active" data-lang="en">EN</span>
+          <span class="language-divider">/</span>
+          <span class="language-option" data-lang="bg">BG</span>
+        </button>
+      </header>
+
+      <main>
+        <section class="intro" id="lab">
+          <div class="eyebrow"><span class="eyebrow-line"></span><span data-i18n="eyebrow">A visual guide to color</span></div>
+          <h1 data-i18n="headline">Make color<br /><em>click.</em></h1>
+          <p class="intro-copy" data-i18n="introCopy">Build a palette, see the relationship, and learn the logic behind every combination.</p>
+        </section>
+
+        <section class="lab-grid" aria-label="Interactive color lab">
+          <div class="panel wheel-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="panel-kicker" data-i18n="labKicker">01 / Choose a base</span>
+                <h2 data-i18n="wheelTitle">Color wheel</h2>
+              </div>
+              <span class="live-label"><span class="live-dot"></span><span data-i18n="live">Live</span></span>
+            </div>
+            <div class="wheel-stage">
+              <div class="color-wheel" id="colorWheel" role="slider" aria-label="Base hue" aria-valuemin="0" aria-valuemax="360" aria-valuenow="204" tabindex="0">
+                <div class="wheel-marker" id="wheelMarker"></div>
+                <div class="wheel-core" id="wheelCore"><span id="wheelCoreValue">#38BDF8</span></div>
+              </div>
+              <div class="wheel-caption"><span data-i18n="dragHint">Drag the marker to explore</span><span class="wheel-degree" id="wheelDegree">204°</span></div>
+            </div>
+            <div class="control-row">
+              <label class="range-control">
+                <span><span data-i18n="saturation">Saturation</span><output id="saturationValue">82%</output></span>
+                <input id="saturation" type="range" min="35" max="100" value="82" />
+              </label>
+              <label class="range-control">
+                <span><span data-i18n="lightness">Lightness</span><output id="lightnessValue">59%</output></span>
+                <input id="lightness" type="range" min="25" max="75" value="59" />
+              </label>
+            </div>
+          </div>
+
+          <div class="panel palette-panel">
+            <div class="panel-heading palette-heading">
+              <div>
+                <span class="panel-kicker" data-i18n="labKicker2">02 / Find a relationship</span>
+                <h2 data-i18n="paletteTitle">Palette builder</h2>
+              </div>
+              <span class="palette-count" id="paletteCount">5 colors</span>
+            </div>
+            <div class="mode-tabs" role="tablist" aria-label="Color harmony">
+              <button class="mode-tab is-selected" type="button" data-mode="complementary" data-i18n="complementary">Complementary</button>
+              <button class="mode-tab" type="button" data-mode="analogous" data-i18n="analogous">Analogous</button>
+              <button class="mode-tab" type="button" data-mode="triadic" data-i18n="triadic">Triadic</button>
+              <button class="mode-tab" type="button" data-mode="split" data-i18n="split">Split</button>
+              <button class="mode-tab" type="button" data-mode="mono" data-i18n="mono">Mono</button>
+            </div>
+            <div class="swatches" id="swatches"></div>
+            <div class="palette-note" id="paletteNote"></div>
+          </div>
+        </section>
+
+        <section class="principles" id="principles">
+          <div class="principles-heading">
+            <div class="eyebrow"><span class="eyebrow-line"></span><span data-i18n="principlesEyebrow">Small rules, big difference</span></div>
+            <h2 data-i18n="principlesTitle">Color is a relationship.</h2>
+          </div>
+          <div class="principle-list">
+            <article class="principle-card">
+              <span class="principle-number">01</span>
+              <h3 data-i18n="principle1Title">Hue is the family.</h3>
+              <p data-i18n="principle1Copy">Red, blue, and everything in between. Hue is where a color lives on the wheel.</p>
+            </article>
+            <article class="principle-card">
+              <span class="principle-number">02</span>
+              <h3 data-i18n="principle2Title">Saturation is the voice.</h3>
+              <p data-i18n="principle2Copy">Turn it up for a vivid shout. Turn it down for a quiet, dusty conversation.</p>
+            </article>
+            <article class="principle-card">
+              <span class="principle-number">03</span>
+              <h3 data-i18n="principle3Title">Lightness is the space.</h3>
+              <p data-i18n="principle3Copy">Lightness sets the atmosphere — from deep shadow to sunlit color.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>HUE / НЮАНС</span>
+        <span data-i18n="footerCopy">A small studio for better color decisions.</span>
+      </footer>
+    </div>
+    <script src="/app.js"></script>
+  </body>
+</html>
