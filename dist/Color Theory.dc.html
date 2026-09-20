@@ -10,12 +10,12 @@
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&amp;family=Instrument+Serif:ital@0;1&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{--bg:#FBF8F1;--surface:#FFFFFF;--ink:#14181D;--ink2:#4C5560;--ink3:#8B939F;--line:#E4DED1;--accent:#2355D9;--hot:#E23A45;
-background:var(--bg);color:var(--ink);font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
 a:hover{text-decoration-thickness:2px}
 button{font-family:inherit}
@@ -93,7 +93,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
 <div style="max-width:1180px;margin:0 auto;padding:0 24px 80px">
 
   <div style="padding:16px 0 14px">
-    <h1 style="margin:0 0 4px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(24px,2.6vw,32px);line-height:1.1;letter-spacing:-.015em">{{ t.h1 }}</h1>
+    <h1 style="margin:0 0 4px;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(24px,2.6vw,32px);line-height:1.1;letter-spacing:-.015em">{{ t.h1 }}</h1>
     <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.lead }}</p>
   </div>
 
@@ -101,7 +101,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:20px">
     <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:24px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px 20px;flex-wrap:wrap;margin-bottom:16px">
-        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:24px;line-height:1.1">{{ t.s1title }}</h2>
+        <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:24px;line-height:1.1">{{ t.s1title }}</h2>
         <div style="display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none">
           <sc-for list="{{ modelModes }}" as="m" hint-placeholder-count="2">
             <button type="button" onClick="{{ m.select }}" style="{{ m.style }}">{{ m.label }}</button>
@@ -121,7 +121,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
           </div>
           <div style="position:absolute;inset:27%;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;padding:14px;pointer-events:none">
             <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)">{{ sel.famLabel }}</span>
-            <span style="font-family:'Instrument Serif',Georgia,serif;font-size:21px;line-height:1.1">{{ sel.name }}</span>
+            <span style="font-family:'IBM Plex Serif',Georgia,serif;font-size:21px;line-height:1.1">{{ sel.name }}</span>
             <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2)">{{ sel.hex }}</span>
             <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink3);white-space:nowrap">H {{ sel.h }}° S {{ sel.s }}%</span>
           </div>
@@ -139,7 +139,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
     <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:24px;display:flex;flex-direction:column;gap:18px">
       <div>
         <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">{{ t.s1bEyebrow }}</div>
-        <h2 style="margin:0 0 10px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:30px;line-height:1.05">{{ t.s1bTitle }}</h2>
+        <h2 style="margin:0 0 10px;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:30px;line-height:1.05">{{ t.s1bTitle }}</h2>
         <p style="margin:0;font-size:14px;line-height:1.6;color:var(--ink2);max-width:52ch;text-wrap:pretty">{{ t.s1bBody }}</p>
       </div>
       <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center">
@@ -157,7 +157,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
         <div style="height:96px;background:{{ mixInk.hex }};transition:background 120ms cubic-bezier(.2,0,.2,1)"></div>
         <div style="padding:14px 16px;text-align:center">
           <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">{{ mixLabelCur }}</div>
-          <div style="font-family:'Instrument Serif',Georgia,serif;font-size:24px;line-height:1.1">{{ mixInk.title }}</div>
+          <div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:24px;line-height:1.1">{{ mixInk.title }}</div>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2);margin-top:4px">{{ mixInk.code }}</div>
         </div>
       </div>
@@ -174,7 +174,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:start;margin-bottom:24px">
       <div>
         <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">{{ t.s2eyebrow }}</div>
-        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s2title }}</h2>
+        <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s2title }}</h2>
       </div>
       <p style="margin:0;font-size:15px;line-height:1.6;color:var(--ink2);max-width:52ch;text-wrap:pretty">{{ t.s2lead }}</p>
     </div>
@@ -183,7 +183,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
         <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:22px;display:flex;flex-direction:column;gap:16px">
           <div>
             <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;color:{{ f.tone }}">{{ f.eyebrow }}</div>
-            <h3 style="margin:0 0 8px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:24px;line-height:1.1">{{ f.title }}</h3>
+            <h3 style="margin:0 0 8px;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:24px;line-height:1.1">{{ f.title }}</h3>
             <p style="margin:0;font-size:13px;line-height:1.6;color:var(--ink2);text-wrap:pretty">{{ f.body }}</p>
           </div>
           <div style="display:flex;gap:8px;margin-top:auto">
@@ -201,7 +201,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:24px;align-items:start">
     <div>
       <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">{{ t.s3eyebrow }}</div>
-      <h2 style="margin:0 0 14px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s3title }}</h2>
+      <h2 style="margin:0 0 14px;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s3title }}</h2>
       <p style="margin:0 0 26px;font-size:15px;line-height:1.6;color:var(--ink2);max-width:50ch;text-wrap:pretty">{{ t.s3lead }}</p>
       <div style="border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:16px">
         <div>
@@ -231,7 +231,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
       <button type="button" onClick="{{ copyPalette }}" style="align-self:flex-start;height:44px;padding:0 22px;border:none;border-radius:5px;background:{{ monoHex }};color:{{ monoFg }};font-size:14px;font-weight:500;cursor:pointer">{{ copyPaletteLabel }}</button>
       <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:20px">
         <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px">
-          <h3 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:22px">{{ t.contrastTitle }}</h3>
+          <h3 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:22px">{{ t.contrastTitle }}</h3>
           <span style="font-size:12px;color:var(--ink3)">{{ t.contrastHint }}</span>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:14px;align-items:start">
@@ -253,7 +253,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
           </div>
         </div>
         <div style="margin-top:16px;border-radius:5px;padding:18px 20px;background:{{ contrast.bg }};color:{{ contrast.fg }}">
-          <div style="font-family:'Instrument Serif',Georgia,serif;font-size:26px;line-height:1.1;margin-bottom:4px">{{ t.contrastSample }}</div>
+          <div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:26px;line-height:1.1;margin-bottom:4px">{{ t.contrastSample }}</div>
           <div style="font-size:13px;line-height:1.5">{{ t.contrastSampleSmall }}</div>
         </div>
         <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:baseline;margin-top:12px">
@@ -271,7 +271,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:start;margin-bottom:24px">
       <div>
         <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--hot);margin-bottom:6px">{{ t.s4eyebrow }}</div>
-        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s4title }}</h2>
+        <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s4title }}</h2>
       </div>
       <p style="margin:0;font-size:15px;line-height:1.6;color:var(--ink2);max-width:52ch;text-wrap:pretty">{{ t.s4lead }}</p>
     </div>
@@ -281,7 +281,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
           <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#93B4FF">{{ t.forScreens }}</div>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#F2EFE9" stroke-width="1.4"><rect x="2" y="3" width="16" height="11" rx="1.5"></rect><path d="M7 17h6"></path></svg>
         </div>
-        <h3 style="margin:0 0 20px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:26px">{{ t.rgbTitle }}</h3>
+        <h3 style="margin:0 0 20px;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:26px">{{ t.rgbTitle }}</h3>
         <div style="position:relative;width:260px;max-width:100%;height:210px;margin:0 auto 22px">
           <div style="position:absolute;left:8%;top:2%;width:55%;height:68%;border-radius:50%;background:#F03A3A;mix-blend-mode:screen"></div>
           <div style="position:absolute;right:8%;top:2%;width:55%;height:68%;border-radius:50%;background:#35D97A;mix-blend-mode:screen"></div>
@@ -299,7 +299,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
           <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#B03A8A">{{ t.forPrint }}</div>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 7V3h8v4"></path><rect x="3" y="7" width="14" height="7" rx="1.5"></rect><path d="M6 14v3h8v-3"></path></svg>
         </div>
-        <h3 style="margin:0 0 20px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:26px">{{ t.cmyTitle }}</h3>
+        <h3 style="margin:0 0 20px;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:26px">{{ t.cmyTitle }}</h3>
         <div style="position:relative;width:260px;max-width:100%;height:210px;margin:0 auto 22px;background:#fff;border-radius:4px">
           <div style="position:absolute;left:8%;top:2%;width:55%;height:68%;border-radius:50%;background:#19B5C4;mix-blend-mode:multiply"></div>
           <div style="position:absolute;right:8%;top:2%;width:55%;height:68%;border-radius:50%;background:#E23C86;mix-blend-mode:multiply"></div>
@@ -315,7 +315,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
     </div>
     <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:24px;margin-top:20px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:18px">
-        <h3 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:24px">{{ t.simTitle }}</h3>
+        <h3 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:24px">{{ t.simTitle }}</h3>
         <span style="font-size:13px;color:var(--ink2);max-width:46ch;text-wrap:pretty">{{ t.simLead }}</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:start">
@@ -372,7 +372,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:start;margin-bottom:24px">
       <div>
         <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">{{ t.s5eyebrow }}</div>
-        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s5title }}</h2>
+        <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s5title }}</h2>
       </div>
       <p style="margin:0;font-size:15px;line-height:1.6;color:var(--ink2);max-width:52ch;text-wrap:pretty">{{ t.s5lead }}</p>
     </div>
@@ -404,7 +404,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
         </div>
         <div style="border:1px solid var(--line);border-radius:6px;padding:26px;background:{{ demoBefore.bg }};color:{{ demoBefore.ink }}">
           <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;color:{{ demoBefore.eyebrow }}">{{ t.demoEyebrow }}</div>
-          <div style="font-family:'Instrument Serif',Georgia,serif;font-size:28px;line-height:1.1;margin-bottom:10px">{{ t.demoTitle }}</div>
+          <div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:28px;line-height:1.1;margin-bottom:10px">{{ t.demoTitle }}</div>
           <div style="font-size:13px;line-height:1.6;margin-bottom:18px">{{ t.demoBody }}</div>
           <span style="display:inline-block;font-size:13px;padding:9px 18px;border-radius:5px;background:{{ demoBefore.accent }};color:{{ demoBefore.accentInk }}">{{ t.demoCta }}</span>
         </div>
@@ -416,7 +416,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
         </div>
         <div style="border:1px solid var(--line);border-radius:6px;padding:26px;background:{{ demoAfter.bg }};color:{{ demoAfter.ink }}">
           <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;color:{{ demoAfter.eyebrow }}">{{ t.demoEyebrow }}</div>
-          <div style="font-family:'Instrument Serif',Georgia,serif;font-size:28px;line-height:1.1;margin-bottom:10px">{{ t.demoTitle }}</div>
+          <div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:28px;line-height:1.1;margin-bottom:10px">{{ t.demoTitle }}</div>
           <div style="font-size:13px;line-height:1.6;margin-bottom:18px">{{ t.demoBody }}</div>
           <span style="display:inline-block;font-size:13px;padding:9px 18px;border-radius:5px;background:{{ demoAfter.accent }};color:{{ demoAfter.accentInk }}">{{ t.demoCta }}</span>
         </div>
@@ -430,7 +430,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:end;margin-bottom:24px">
       <div>
         <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--hot);margin-bottom:6px">{{ t.s6eyebrow }}</div>
-        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s6title }}</h2>
+        <h2 style="margin:0;font-family:'IBM Plex Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s6title }}</h2>
       </div>
       <div style="display:flex;align-items:baseline;gap:16px;justify-content:flex-end;flex-wrap:wrap">
         <span style="font-family:'IBM Plex Mono',monospace;font-size:15px">{{ quizScore }}</span>
@@ -456,7 +456,7 @@ input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
   </div>
   </sc-if>
 
-  <p style="margin:56px 0 0;padding-top:24px;border-top:1px solid var(--line);font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:17px;line-height:1.5;color:var(--ink2);text-align:center;text-wrap:pretty">{{ t.tip }}</p>
+  <p style="margin:56px 0 0;padding-top:24px;border-top:1px solid var(--line);font-family:'IBM Plex Serif',Georgia,serif;font-style:italic;font-size:17px;line-height:1.5;color:var(--ink2);text-align:center;text-wrap:pretty">{{ t.tip }}</p>
 
 </div>
 </div>
@@ -778,7 +778,7 @@ class Component extends DCLogic {
     const selHex = W[s.sel].hex, sh = hsl(selHex);
     const famLabel = { p: t.famPt, s: t.famSt, t: t.famTt }[W[s.sel].fam];
 
-    const rootStyle = `--bg:${th.bg};--surface:${th.surface};--ink:${th.ink};--ink2:${th.ink2};--ink3:${th.ink3};--line:${th.line};--accent:${th.accent};--hot:${th.hot};background:${th.bg};color:${th.ink};min-height:100vh;font-family:'Instrument Sans',system-ui,sans-serif`;
+    const rootStyle = `--bg:${th.bg};--surface:${th.surface};--ink:${th.ink};--ink2:${th.ink2};--ink3:${th.ink3};--line:${th.line};--accent:${th.accent};--hot:${th.hot};background:${th.bg};color:${th.ink};min-height:100vh;font-family:'IBM Plex Sans',system-ui,sans-serif`;
 
     const langBtn = on => `height:30px;padding:0 13px;border:none;cursor:pointer;font-size:12px;letter-spacing:.06em;background:${on?th.ink:'transparent'};color:${on?th.bg:th.ink2}`;
 
@@ -920,4 +920,6 @@ class Component extends DCLogic {
 </script>
 </body>
 </html>
+
+
 

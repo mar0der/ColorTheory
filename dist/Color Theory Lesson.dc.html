@@ -10,12 +10,12 @@
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{--k:1;--bg:#FBF8F1;--card:#FFFFFF;--ink:#14181D;--ink2:#4C5560;--ink3:#8B939F;--edge:#14181D;--soft:#E4DED1;--good:#137A4C;--bad:#C63030;
-background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
 a:hover{text-decoration-thickness:2px}
 button{font-family:inherit}
@@ -613,7 +613,7 @@ class Component extends DCLogic {
     const GOOD = th.good, BAD = th.bad;
     const step = t.steps[s.step], last = s.step === 9, total = 10;
 
-    const rootStyle = `--k:${k};--bg:${th.bg};--card:${th.card};--ink:${th.ink};--ink2:${th.ink2};--ink3:${th.ink3};--edge:${th.edge};--soft:${th.soft};background:${th.bg};color:${th.ink};min-height:100vh;font-family:Archivo,system-ui,sans-serif`;
+    const rootStyle = `--k:${k};--bg:${th.bg};--card:${th.card};--ink:${th.ink};--ink2:${th.ink2};--ink3:${th.ink3};--edge:${th.edge};--soft:${th.soft};background:${th.bg};color:${th.ink};min-height:100vh;font-family:'IBM Plex Sans',system-ui,sans-serif`;
 
     const pill = on => `height:40px;padding:0 16px;border:none;cursor:pointer;font-size:calc(14px * var(--k));font-weight:600;background:${on?th.ink:'transparent'};color:${on?th.card:th.ink2}`;
     const solid = `min-height:calc(48px * var(--k));padding:0 calc(22px * var(--k));border:2px solid ${th.edge};border-radius:10px;background:${th.ink};color:${th.card};font-size:calc(16px * var(--k));font-weight:700;cursor:pointer`;
@@ -771,4 +771,6 @@ class Component extends DCLogic {
 </script>
 </body>
 </html>
+
+
 

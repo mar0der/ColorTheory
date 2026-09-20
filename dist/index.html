@@ -13,7 +13,7 @@
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -28,7 +28,7 @@ a:hover{text-decoration-thickness:2px}
   <div style="position:sticky;top:0;z-index:50;background:{{ bgc }};border-bottom:1px solid {{ line }}">
     <div style="max-width:1180px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
       <div style="display:flex;align-items:center;gap:20px;min-width:0;flex-wrap:wrap">
-        <span style="font-family:'Instrument Serif',Georgia,serif;font-size:20px;line-height:1.1;white-space:nowrap">{{ title }}</span>
+        <span style="font-family:'IBM Plex Serif',Georgia,serif;font-size:20px;line-height:1.1;white-space:nowrap">{{ title }}</span>
         <div style="display:flex;gap:4px">
           <sc-for list="{{ modes }}" as="m" hint-placeholder-count="2">
             <button type="button" onClick="{{ m.select }}" style="{{ m.style }}">{{ m.label }}</button>
@@ -93,12 +93,12 @@ class Component extends DCLogic {
 
     const tab = (label, i) => ({ label,
       select: () => this.setState({ mode: i }),
-      style: `height:34px;padding:0 18px;border:1px solid ${s.mode===i?ink:line};border-radius:999px;background:${s.mode===i?ink:'transparent'};color:${s.mode===i?bgc:ink2};font-family:'Instrument Sans',system-ui,sans-serif;font-size:14px;font-weight:500;cursor:pointer` });
+      style: `height:34px;padding:0 18px;border:1px solid ${s.mode===i?ink:line};border-radius:999px;background:${s.mode===i?ink:'transparent'};color:${s.mode===i?bgc:ink2};font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px;font-weight:500;cursor:pointer` });
 
-    const pill = on => `height:30px;padding:0 13px;border:none;cursor:pointer;font-family:'Instrument Sans',system-ui,sans-serif;font-size:12px;letter-spacing:.06em;background:${on?ink:'transparent'};color:${on?bgc:ink2}`;
+    const pill = on => `height:30px;padding:0 13px;border:none;cursor:pointer;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:12px;letter-spacing:.06em;background:${on?ink:'transparent'};color:${on?bgc:ink2}`;
 
     return {
-      rootStyle: `background:${bgc};color:${ink};min-height:100vh;font-family:'Instrument Sans',system-ui,sans-serif`,
+      rootStyle: `background:${bgc};color:${ink};min-height:100vh;font-family:'IBM Plex Sans',system-ui,sans-serif`,
       title: t.title, bgc, line, lang: s.lang, theme: s.theme, big: s.big,
       modes: [tab(t.theory, 0), tab(t.practice, 1)],
       isPractice: s.mode === 1,
@@ -112,11 +112,13 @@ class Component extends DCLogic {
       themeDotStyle: `width:12px;height:12px;border-radius:50%;background:${dark?ink:'transparent'};border:1.5px solid ${ink2}`,
       projectorLabel: t.projector,
       toggleBig: () => this.setState({ big: !s.big }),
-      bigStyle: `height:34px;padding:0 14px;border:1px solid ${s.big?ink:line};border-radius:999px;background:${s.big?ink:'transparent'};color:${s.big?bgc:ink2};font-family:'Instrument Sans',system-ui,sans-serif;font-size:13px;cursor:pointer`
+      bigStyle: `height:34px;padding:0 14px;border:1px solid ${s.big?ink:line};border-radius:999px;background:${s.big?ink:'transparent'};color:${s.big?bgc:ink2};font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;cursor:pointer`
     };
   }
 }
 </script>
 </body>
 </html>
+
+
 
