@@ -2,6 +2,8 @@
 
 An interactive bilingual color theory studio in Bulgarian and English.
 
+Project owner: Luma.
+
 ## Local preview
 
 Because the site is static, open `dist/index.html` directly or run:
