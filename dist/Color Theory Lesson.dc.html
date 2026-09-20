@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{--k:1;--bg:#FBF8F1;--card:#FFFFFF;--ink:#14181D;--ink2:#4C5560;--ink3:#8B939F;--edge:#14181D;--soft:#E4DED1;--good:#137A4C;--bad:#C63030;
+background:var(--bg);color:var(--ink);font-family:Archivo,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+button{font-family:inherit}
+input,input[type=text]{font-family:inherit}
+input[type=range]{-webkit-appearance:none;appearance:none;height:40px;background:transparent;cursor:pointer;color:var(--ink)}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:currentColor;opacity:.25}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;margin-top:-14px;border-radius:50%;background:var(--card);border:3px solid var(--edge)}
+</style>
+</helmet>
+
+<div style="{{ rootStyle }}">
+
+<sc-if value="{{ standalone }}" hint-placeholder-val="{{ true }}">
+<div style="position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:2px solid var(--edge)">
+  <div style="max-width:1100px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:10px;min-width:0">
+      <span style="font-weight:800;font-size:calc(15px * var(--k));letter-spacing:-.01em;white-space:nowrap">{{ t.brand }}</span>
+      <span style="font-size:calc(12px * var(--k));color:var(--ink3);white-space:nowrap">{{ t.grade }}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="display:flex;border:2px solid var(--edge);border-radius:999px;overflow:hidden">
+        <button type="button" onClick="{{ setBg }}" style="{{ langBgStyle }}">БГ</button>
+        <button type="button" onClick="{{ setEn }}" style="{{ langEnStyle }}">EN</button>
+      </div>
+      <button type="button" onClick="{{ toggleBig }}" style="{{ bigStyle }}">{{ t.projector }}</button>
+      <button type="button" onClick="{{ toggleTheme }}" title="{{ t.theme }}" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:2px solid var(--edge);border-radius:999px;background:transparent;color:inherit;cursor:pointer">
+        <span style="{{ themeDotStyle }}"></span>
+      </button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<div style="max-width:1100px;margin:0 auto;padding:18px 20px 64px">
+
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:calc(13px * var(--k))">{{ progressLabel }}</span>
+    <div style="flex:1;min-width:140px;height:10px;border:2px solid var(--edge);border-radius:999px;overflow:hidden;background:var(--card)">
+      <div style="height:100%;width:{{ progressPct }}%;background:var(--ink);transition:width 160ms cubic-bezier(.2,0,.2,1)"></div>
+    </div>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:calc(13px * var(--k));color:var(--ink3)">{{ scoreLabel }}</span>
+  </div>
+
+  <div style="border:2px solid var(--edge);border-radius:14px;background:var(--card);padding:calc(22px * var(--k)) calc(24px * var(--k))">
+
+    <h1 style="margin:0 0 calc(8px * var(--k));font-weight:800;font-size:calc(28px * var(--k));line-height:1.1;letter-spacing:-.02em;text-wrap:balance">{{ step.title }}</h1>
+    <p style="margin:0 0 calc(18px * var(--k));font-size:calc(17px * var(--k));line-height:1.45;color:var(--ink2);max-width:62ch;text-wrap:pretty">{{ step.instruction }}</p>
+
+    <sc-if value="{{ hasTerms }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:calc(18px * var(--k))">
+        <span style="font-size:calc(12px * var(--k));letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">{{ t.newWords }}</span>
+        <sc-for list="{{ terms }}" as="tm" hint-placeholder-count="2">
+          <button type="button" onClick="{{ tm.open }}" style="{{ tm.style }}">{{ tm.word }}</button>
+        </sc-for>
+      </div>
+      <sc-if value="{{ termOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="border:2px solid var(--edge);border-radius:12px;background:var(--bg);padding:calc(14px * var(--k)) calc(16px * var(--k));margin-bottom:calc(18px * var(--k))">
+          <div style="font-weight:700;font-size:calc(15px * var(--k));margin-bottom:4px">{{ term.word }}</div>
+          <div style="font-size:calc(15px * var(--k));line-height:1.5;color:var(--ink2);text-wrap:pretty">{{ term.def }}</div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:calc(24px * var(--k));align-items:center">
+        <div onClick="{{ wheelTap }}" style="position:relative;width:100%;max-width:calc(300px * var(--k));margin:0 auto;aspect-ratio:1;cursor:pointer">
+          <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from -15deg,#EE3340 0deg 30deg,#F0552B 30deg 60deg,#F5871F 60deg 90deg,#F7B32B 90deg 120deg,#F2CB2E 120deg 150deg,#ADCE2B 150deg 180deg,#2EA96A 180deg 210deg,#14A5A5 210deg 240deg,#2A84D2 240deg 270deg,#3D4FC4 270deg 300deg,#7030C0 300deg 330deg,#CA3372 330deg 360deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 0 46%,#000 46.6% 100%);mask:radial-gradient(circle at 50% 50%,transparent 0 46%,#000 46.6% 100%)"></div>
+          <div style="position:absolute;inset:0;pointer-events:none;transform:rotate({{ tapAngle }}deg);transition:transform 120ms cubic-bezier(.2,0,.2,1)">
+            <div style="position:absolute;left:50%;top:3%;width:28px;height:28px;margin-left:-14px;border-radius:50%;border:4px solid var(--card);box-shadow:0 0 0 2px var(--edge);opacity:{{ markerOpacity }}"></div>
+          </div>
+          <div style="position:absolute;inset:23%;border-radius:50%;border:2px solid var(--edge);background:var(--card);display:flex;align-items:center;justify-content:center;padding:10px;text-align:center;pointer-events:none">
+            <span style="font-weight:700;font-size:calc(16px * var(--k));line-height:1.2">{{ tapName }}</span>
+          </div>
+        </div>
+        <div>
+          <div style="border:2px solid var(--edge);border-radius:12px;padding:calc(16px * var(--k));background:var(--bg)">
+            <div style="font-weight:700;font-size:calc(16px * var(--k));margin-bottom:6px">{{ t.task }}</div>
+            <div style="font-size:calc(16px * var(--k));line-height:1.5;margin-bottom:12px">{{ task1Text }}</div>
+            <button type="button" onClick="{{ clearTap }}" style="{{ clearStyle }}">{{ t.clear }}</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px">
+        <sc-for list="{{ primaryChoices }}" as="c" hint-placeholder-count="6">
+          <button type="button" onClick="{{ c.toggle }}" style="{{ c.style }}">
+            <span style="display:block;height:calc(72px * var(--k));border-radius:8px;background:{{ c.hex }}"></span>
+            <span style="display:block;margin-top:8px;font-weight:600;font-size:calc(15px * var(--k))">{{ c.name }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <button type="button" onClick="{{ checkPrimaries }}" style="{{ checkBtnStyle }}">{{ t.check }}</button>
+    </sc-if>
+
+    <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:calc(12px * var(--k));flex-wrap:wrap;margin-bottom:calc(20px * var(--k))">
+        <span style="width:calc(72px * var(--k));height:calc(72px * var(--k));border-radius:10px;border:2px solid var(--edge);background:#F2CB2E"></span>
+        <span style="font-weight:700;font-size:calc(24px * var(--k))">+</span>
+        <span style="width:calc(72px * var(--k));height:calc(72px * var(--k));border-radius:10px;border:2px solid var(--edge);background:#2A84D2"></span>
+        <span style="font-weight:700;font-size:calc(24px * var(--k))">=</span>
+        <span style="{{ revealBoxStyle }}">{{ revealText }}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:10px">
+        <sc-for list="{{ predict3 }}" as="o" hint-placeholder-count="3">
+          <button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px">
+        <sc-for list="{{ secondaries }}" as="s" hint-placeholder-count="3">
+          <button type="button" onClick="{{ s.reveal }}" style="border:2px solid var(--edge);border-radius:12px;background:var(--bg);padding:calc(16px * var(--k));cursor:pointer;text-align:left;color:inherit">
+            <span style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+              <span style="width:calc(34px * var(--k));height:calc(34px * var(--k));border-radius:7px;border:2px solid var(--edge);background:{{ s.a }}"></span>
+              <span style="font-weight:700;font-size:calc(18px * var(--k))">+</span>
+              <span style="width:calc(34px * var(--k));height:calc(34px * var(--k));border-radius:7px;border:2px solid var(--edge);background:{{ s.b }}"></span>
+            </span>
+            <span style="display:block;height:calc(64px * var(--k));border-radius:8px;border:2px solid var(--edge);background:{{ s.fill }}"></span>
+            <span style="display:block;margin-top:10px;font-weight:600;font-size:calc(15px * var(--k))">{{ s.label }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStep5 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:calc(22px * var(--k));align-items:start">
+        <div>
+          <div style="border:2px solid var(--edge);border-radius:12px;overflow:hidden">
+            <div style="height:calc(150px * var(--k));display:flex;align-items:center;justify-content:center;padding:calc(16px * var(--k));text-align:center;background:{{ readBg }}">
+              <span style="font-weight:700;font-size:calc(22px * var(--k));color:{{ readFg }}">{{ t.toneSample }}</span>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;font-family:'IBM Plex Mono',monospace;font-size:calc(13px * var(--k));color:var(--ink3);margin-top:6px">{{ readRatio }}</div>
+        </div>
+        <div style="border:2px solid var(--edge);border-radius:12px;padding:calc(16px * var(--k));background:var(--bg)">
+          <div style="font-weight:700;font-size:calc(16px * var(--k));margin-bottom:6px">{{ t.task }}</div>
+          <div style="font-size:calc(16px * var(--k));line-height:1.5;margin-bottom:14px">{{ t.task5 }}</div>
+          <div style="font-weight:700;font-size:calc(14px * var(--k));margin-bottom:6px">{{ t.txtColor }}</div>
+          <div style="display:flex;gap:6px;margin-bottom:14px">
+            <sc-for list="{{ fgSwatches }}" as="c" hint-placeholder-count="8">
+              <button type="button" onClick="{{ c.select }}" style="{{ c.style }}"></button>
+            </sc-for>
+          </div>
+          <div style="font-weight:700;font-size:calc(14px * var(--k));margin-bottom:6px">{{ t.bgColor }}</div>
+          <div style="display:flex;gap:6px;margin-bottom:16px">
+            <sc-for list="{{ bgSwatches }}" as="c" hint-placeholder-count="8">
+              <button type="button" onClick="{{ c.select }}" style="{{ c.style }}"></button>
+            </sc-for>
+          </div>
+          <div style="font-weight:700;font-size:calc(14px * var(--k));margin-bottom:2px">{{ t.bgLightness }}</div>
+          <input type="range" min="0" max="100" step="5" value="{{ tone }}" onChange="{{ setTone }}" style="width:100%">
+          <div style="display:flex;justify-content:space-between;font-size:calc(13px * var(--k));color:var(--ink3);margin-bottom:16px">
+            <span>{{ t.darker }}</span><span>{{ t.lighter }}</span>
+          </div>
+          <button type="button" onClick="{{ checkTone }}" style="{{ checkBtnStyle }}">{{ t.check }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStep6 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:10px;margin-bottom:calc(18px * var(--k))">
+        <sc-for list="{{ predict6 }}" as="o" hint-placeholder-count="3">
+          <button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button>
+        </sc-for>
+      </div>
+      <sc-if value="{{ shown6 }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px">
+          <div style="border:2px solid var(--edge);border-radius:12px;overflow:hidden">
+            <div style="height:calc(110px * var(--k));background:#68A168"></div>
+            <div style="padding:calc(12px * var(--k));font-size:calc(15px * var(--k));line-height:1.45"><b>{{ t.asPaint }}</b><br>{{ t.asPaintNote }}</div>
+          </div>
+          <div style="border:2px solid var(--edge);border-radius:12px;overflow:hidden">
+            <div style="height:calc(110px * var(--k));background:#FFFFFF;border-bottom:2px solid var(--edge)"></div>
+            <div style="padding:calc(12px * var(--k));font-size:calc(15px * var(--k));line-height:1.45"><b>{{ t.asLight }}</b><br>{{ t.asLightNote }}</div>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isStep7 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:calc(24px * var(--k));align-items:center">
+        <div onClick="{{ wheelTap }}" style="position:relative;width:100%;max-width:calc(300px * var(--k));margin:0 auto;aspect-ratio:1;cursor:pointer">
+          <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from -15deg,#EE3340 0deg 30deg,#F0552B 30deg 60deg,#F5871F 60deg 90deg,#F7B32B 90deg 120deg,#F2CB2E 120deg 150deg,#ADCE2B 150deg 180deg,#2EA96A 180deg 210deg,#14A5A5 210deg 240deg,#2A84D2 240deg 270deg,#3D4FC4 270deg 300deg,#7030C0 300deg 330deg,#CA3372 330deg 360deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 0 46%,#000 46.6% 100%);mask:radial-gradient(circle at 50% 50%,transparent 0 46%,#000 46.6% 100%)"></div>
+          <div style="position:absolute;inset:0;pointer-events:none;transform:rotate({{ tapAngle }}deg);transition:transform 120ms cubic-bezier(.2,0,.2,1)">
+            <div style="position:absolute;left:50%;top:3%;width:28px;height:28px;margin-left:-14px;border-radius:50%;border:4px solid var(--card);box-shadow:0 0 0 2px var(--edge);opacity:{{ markerOpacity }}"></div>
+          </div>
+          <div style="position:absolute;inset:23%;border-radius:50%;border:2px solid var(--edge);background:var(--card);display:flex;align-items:center;justify-content:center;padding:10px;text-align:center;pointer-events:none">
+            <span style="font-weight:700;font-size:calc(16px * var(--k));line-height:1.2">{{ tapName }}</span>
+          </div>
+        </div>
+        <div style="border:2px solid var(--edge);border-radius:12px;padding:calc(16px * var(--k));background:var(--bg)">
+          <div style="font-weight:700;font-size:calc(16px * var(--k));margin-bottom:6px">{{ t.task }}</div>
+          <div style="font-size:calc(16px * var(--k));line-height:1.5">{{ t.task7 }}</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:14px">
+            <span style="width:calc(44px * var(--k));height:calc(44px * var(--k));border-radius:8px;border:2px solid var(--edge);background:{{ pairAHex }}"></span>
+            <span style="font-weight:700;font-size:calc(20px * var(--k))">+</span>
+            <span style="width:calc(44px * var(--k));height:calc(44px * var(--k));border-radius:8px;border:2px solid var(--edge);background:{{ pairBHex }}"></span>
+          </div>
+          <button type="button" onClick="{{ clearTap }}" style="{{ clearStyle }}">{{ t.clear }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStep8 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:calc(24px * var(--k));align-items:center">
+        <div onClick="{{ wheelTap }}" style="position:relative;width:100%;max-width:calc(300px * var(--k));margin:0 auto;aspect-ratio:1;cursor:pointer">
+          <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from -15deg,#EE3340 0deg 30deg,#F0552B 30deg 60deg,#F5871F 60deg 90deg,#F7B32B 90deg 120deg,#F2CB2E 120deg 150deg,#ADCE2B 150deg 180deg,#2EA96A 180deg 210deg,#14A5A5 210deg 240deg,#2A84D2 240deg 270deg,#3D4FC4 270deg 300deg,#7030C0 300deg 330deg,#CA3372 330deg 360deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 0 46%,#000 46.6% 100%);mask:radial-gradient(circle at 50% 50%,transparent 0 46%,#000 46.6% 100%)"></div>
+          <div style="position:absolute;inset:0;pointer-events:none;transform:rotate({{ tapAngle }}deg);transition:transform 120ms cubic-bezier(.2,0,.2,1)">
+            <div style="position:absolute;left:50%;top:3%;width:28px;height:28px;margin-left:-14px;border-radius:50%;border:4px solid var(--card);box-shadow:0 0 0 2px var(--edge);opacity:{{ markerOpacity }}"></div>
+          </div>
+          <div style="position:absolute;inset:23%;border-radius:50%;border:2px solid var(--edge);background:var(--card);display:flex;align-items:center;justify-content:center;padding:10px;text-align:center;pointer-events:none">
+            <span style="font-weight:700;font-size:calc(16px * var(--k));line-height:1.2">{{ tapName }}</span>
+          </div>
+        </div>
+        <div style="border:2px solid var(--edge);border-radius:12px;padding:calc(16px * var(--k));background:var(--bg)">
+          <div style="font-weight:700;font-size:calc(16px * var(--k));margin-bottom:6px">{{ t.task }}</div>
+          <div style="font-size:calc(16px * var(--k));line-height:1.5">{{ t.task8 }}</div>
+          <div style="display:flex;gap:8px;margin-top:14px">
+            <sc-for list="{{ anSwatches }}" as="w" hint-placeholder-count="3">
+              <span style="flex:1;display:flex;align-items:flex-end;height:calc(64px * var(--k));padding:6px;border-radius:8px;border:2px solid var(--edge);background:{{ w.hex }};font-size:calc(11px * var(--k));font-weight:600;color:var(--ink3)"></span>
+            </sc-for>
+          </div>
+          <button type="button" onClick="{{ clearTap }}" style="{{ clearStyle }}">{{ t.clear }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStep9 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:calc(22px * var(--k));align-items:start">
+        <div>
+          <div style="font-weight:700;font-size:calc(15px * var(--k));margin-bottom:8px">{{ t.monoBase }}</div>
+          <div style="display:flex;gap:8px;margin-bottom:14px">
+            <sc-for list="{{ monoBaseChoices }}" as="c" hint-placeholder-count="6">
+              <button type="button" onClick="{{ c.select }}" style="{{ c.style }}"></button>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+            <sc-for list="{{ monoModeButtons }}" as="m" hint-placeholder-count="3">
+              <button type="button" onClick="{{ m.select }}" style="{{ m.style }}">{{ m.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px">
+            <sc-for list="{{ monoStrip }}" as="w" hint-placeholder-count="5">
+              <span style="height:calc(86px * var(--k));border-radius:8px;border:2px solid var(--edge);background:{{ w.hex }}"></span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="border:2px solid var(--edge);border-radius:12px;padding:calc(16px * var(--k));background:var(--bg)">
+          <div style="font-weight:700;font-size:calc(16px * var(--k));margin-bottom:6px">{{ t.task }}</div>
+          <div style="font-size:calc(16px * var(--k));line-height:1.5;margin-bottom:12px">{{ t.task9 }}</div>
+          <div style="display:grid;gap:10px">
+            <sc-for list="{{ monoPalettes }}" as="p" hint-placeholder-count="3">
+              <button type="button" onClick="{{ p.pick }}" style="{{ p.style }}">
+                <span style="display:flex;gap:4px;height:calc(40px * var(--k))">
+                  <sc-for list="{{ p.colors }}" as="c" hint-placeholder-count="5">
+                    <span style="flex:1;border-radius:5px;background:{{ c.hex }}"></span>
+                  </sc-for>
+                </span>
+                <span style="display:block;margin-top:8px;font-size:calc(14px * var(--k));font-weight:600">{{ p.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:calc(22px * var(--k));align-items:start">
+        <div>
+          <div style="font-weight:800;font-size:calc(52px * var(--k));line-height:1">{{ finalScore }}</div>
+          <div style="font-size:calc(16px * var(--k));color:var(--ink2);margin-bottom:calc(18px * var(--k))">{{ t.outOf }}</div>
+          <label style="display:block;font-weight:700;font-size:calc(15px * var(--k));margin-bottom:6px">{{ t.yourName }}</label>
+          <input type="text" value="{{ name }}" onChange="{{ setName }}" placeholder="{{ t.namePh }}" style="width:100%;max-width:320px;height:calc(48px * var(--k));padding:0 14px;border:2px solid var(--edge);border-radius:10px;background:var(--card);color:inherit;font-size:calc(16px * var(--k))">
+          <div style="margin-top:calc(16px * var(--k));border:2px dashed var(--edge);border-radius:12px;padding:calc(14px * var(--k));display:inline-block">
+            <div style="font-size:calc(12px * var(--k));letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px">{{ t.codeLabel }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:calc(22px * var(--k))">{{ code }}</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:calc(17px * var(--k));margin-bottom:10px">{{ t.learned }}</div>
+          <div style="display:grid;gap:8px">
+            <sc-for list="{{ takeaways }}" as="k" hint-placeholder-count="4">
+              <div style="display:flex;gap:10px;align-items:flex-start;border:2px solid var(--edge);border-radius:10px;padding:calc(12px * var(--k));background:var(--bg)">
+                <span style="width:calc(18px * var(--k));height:calc(18px * var(--k));border-radius:4px;flex:none;margin-top:2px;background:{{ k.hex }}"></span>
+                <span style="font-size:calc(15px * var(--k));line-height:1.45;text-wrap:pretty">{{ k.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="font-size:calc(16px * var(--k));font-weight:600;line-height:1.45;margin-top:calc(18px * var(--k));color:{{ feedbackTone }};text-wrap:pretty">{{ feedback }}</div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:calc(20px * var(--k));padding-top:calc(18px * var(--k));border-top:2px solid var(--soft)">
+      <button type="button" onClick="{{ prev }}" style="{{ prevStyle }}">{{ t.back }}</button>
+      <button type="button" onClick="{{ next }}" style="{{ nextStyle }}">{{ nextLabel }}</button>
+      <button type="button" onClick="{{ restart }}" style="{{ restartStyle }}">{{ t.restart }}</button>
+    </div>
+  </div>
+
+  <p style="margin:calc(22px * var(--k)) 0 0;font-size:calc(14px * var(--k));line-height:1.5;color:var(--ink3);text-align:center">{{ t.footer }}</p>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100},&quot;defaultProjector&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const W = [
+  ['#EE3340','Червено','Red'], ['#F0552B','Червено-оранжево','Red-orange'], ['#F5871F','Оранжево','Orange'],
+  ['#F7B32B','Жълто-оранжево','Yellow-orange'], ['#F2CB2E','Жълто','Yellow'], ['#ADCE2B','Жълто-зелено','Yellow-green'],
+  ['#2EA96A','Зелено','Green'], ['#14A5A5','Синьо-зелено','Blue-green'], ['#2A84D2','Синьо','Blue'],
+  ['#3D4FC4','Синьо-виолетово','Blue-violet'], ['#7030C0','Виолетово','Violet'], ['#CA3372','Червено-виолетово','Red-violet']
+];
+
+const T = {
+  bg: {
+    brand:'Цветова теория · урок', grade:'5.–7. клас · 40 минути', projector:'Прожектор', theme:'Тема',
+    stepOf:'Стъпка', of:'от', points:'точки', task:'Задача', check:'Провери', newWords:'Нови думи',
+    back:'Назад', next:'Напред', finish:'Край', restart:'Отначало', clear:'Изчисти избора',
+    footer:'Кликай по цветовете. Грешният отговор също учи.',
+    steps:[
+      { title:'Цветното колело', instruction:'Всички цветове могат да се подредят в кръг. Съседните цветове си приличат, далечните — не.' },
+      { title:'Три основни цвята', instruction:'Три цвята не могат да се получат от смесване на други бои. Всички останали идват от тях.' },
+      { title:'Предскажи микса', instruction:'Смесваме жълта и синя БОЯ. Първо помисли какво ще се получи, после провери.' },
+      { title:'Вторични цветове', instruction:'Всеки от тези цветове идва от смесване на два основни. Кликни, за да видиш резултата.' },
+      { title:'Четимост', instruction:'Два цвята се четат добре заедно само когато са достатъчно различни по светлота. Близките цветове се сливат.' },
+      { title:'Боя или светлина', instruction:'Сега смесваме жълта и синя СВЕТЛИНА, като на сцена. Помисли: същото ли ще се получи?' },
+      { title:'Срещуположни цветове', instruction:'Цветовете един срещу друг в колелото са комплементарни / допълващи се. Сложиш ли ги един до друг, и двата изпъкват най-силно.' },
+      { title:'Съседни цветове', instruction:'Три цвята един до друг в колелото си приличат и вървят добре заедно. Такава комбинация е спокойна за окото.' },
+      { title:'Монохромна палитра', instruction:'Монохромната палитра започва с един нюанс. Добави бяло за светли тонове, черно за тъмни тонове или сиво за неутрални вариации.' },
+      { title:'Готово', instruction:'Това е твоят резултат. Покажи кода на учителя.' }
+    ],
+    task1:'Намери и кликни върху %s в колелото.',
+    task5:'Смени цвета на текста и на фона, докато надписът стане ясно четим.',
+    txtColor:'Цвят на текста', bgColor:'Цвят на фона', contrastLabel:'Контраст',
+    bgLightness:'Светлота на фона (+ бяло / + черно)',
+    task7:'Избери два цвята, които стоят точно един срещу друг в колелото.',
+    toneSample:'Чете ли се?', darker:'по-тъмно', lighter:'по-светло',
+    predict3:['Зелено','Оранжево','Виолетово'],
+    predict6:['Почти бяло','Пак зелено','Черно'],
+    asPaint:'Като боя', asPaintNote:'Боите поглъщат светлина и резултатът потъмнява — получава се зелено.',
+    asLight:'Като светлина', asLightNote:'Светлините се събират и резултатът изсветлява — почти бяло.',
+    secondaries:[
+      { label:'Червено + жълто = оранжево' },
+      { label:'Жълто + синьо = зелено' },
+      { label:'Синьо + червено = виолетово' }
+    ],
+    terms:{
+      wheel:['цветно колело','Подредба на цветовете в кръг, за да се вижда кой до кой стои.'],
+      primary:['основен цвят','Цвят, който не можеш да получиш от смесване на други бои: червено, жълто, синьо.'],
+      secondary:['вторичен цвят','Цвят от смесване на два основни: оранжево, зелено, виолетово.'],
+      pigment:['пигмент','Цветното вещество в боята, мастилото и цветния молив.'],
+      tone:['тон','Един и същ цвят, направен по-светъл или по-тъмен.'],
+      complementary:['комплементарен','Цветът точно срещу даден цвят в колелото.'],
+      analogous:['съседни (аналогични)','Три цвята, които стоят един до друг в колелото.'],
+      mono:['монохромна','Палитра от един цвят, направен по-светъл, по-тъмен или по-мек.'],
+      contrast:['контраст','Разликата в светлотата между два цвята. Голяма разлика — текстът се чете лесно.']
+    },
+    right:'Вярно.', wrong:'Не е това. Опитай пак.',
+    ok1:'Вярно — зеленото е между жълтото и синьото.',
+    no1:'Още не. Търси между жълтото и синьото.',
+    ok2:'Вярно — червено, жълто и синьо.',
+    no2:'Не съвсем. Оранжевото, зеленото и виолетовото се получават от смесване.',
+    ok3:'Вярно — жълто и синя боя дават зелено.',
+    no3:'Не. Жълто и синя боя дават зелено.',
+    ok5:'Добре — разликата е достатъчна и текстът се чете.',
+    no5:'Двата цвята са твърде близки. Избери по-тъмен текст или по-светъл фон.',
+    ok6:'Вярно — светлините се събират и стават почти бели.',
+    no6:'Не. Като светлина резултатът е почти бял, не зелен.',
+    ok7:'Вярно — тези два цвята са комплементарни.',
+    no7:'Тези два не са срещуположни. Изчисти избора и опитай пак.',
+    task8:'Избери три цвята, които стоят един до друг в колелото.',
+    ok8:'Вярно — това е съседна (аналогична) комбинация.',
+    no8:'Тези три не са съседни. Изчисти избора и опитай пак.',
+    monoBase:'Избери цвят', monoModes:['По-светло','По-тъмно','По-меко'],
+    task9:'Коя от трите палитри е монохромна?',
+    ok9:'Вярно — един и същ цвят, само различно светъл.',
+    no9:'Не. В тази палитра има повече от един цвят.',
+    palA:'Палитра 1', palB:'Палитра 2', palC:'Палитра 3',
+    outOf:'от 8 точки', yourName:'Твоето име', namePh:'име и клас', codeLabel:'Код за учителя',
+    needName:'напиши името си',
+    learned:'Какво научи',
+    takeaways:[
+      'Цветовете се подреждат в кръг: съседните си приличат.',
+      'Основните са три: червено, жълто, синьо.',
+      'Смесване на боя потъмнява, смесване на светлина изсветлява.',
+      'Бяло прави тона по-светъл, черно — по-тъмен.',
+      'Срещуположните цветове контрастират, съседните вървят спокойно заедно.'
+    ]
+  },
+  en: {
+    brand:'Colour theory · lesson', grade:'Grades 5–7 · 40 minutes', projector:'Projector', theme:'Theme',
+    stepOf:'Step', of:'of', points:'points', task:'Task', check:'Check', newWords:'New words',
+    back:'Back', next:'Next', finish:'Finish', restart:'Start again', clear:'Clear selection',
+    footer:'Tap the colours. A wrong answer teaches too.',
+    steps:[
+      { title:'The colour wheel', instruction:'Every colour can be arranged in a circle. Neighbours look alike; opposites do not.' },
+      { title:'Three primary colours', instruction:'Three colours cannot be made by mixing other paints. Everything else comes from them.' },
+      { title:'Predict the mix', instruction:'We are mixing yellow and blue PAINT. Think first, then check.' },
+      { title:'Secondary colours', instruction:'Each of these comes from mixing two primaries. Tap to see the result.' },
+      { title:'Readability', instruction:'Two colours read well together only when their lightness differs enough. Close colours merge into each other.' },
+      { title:'Paint or light', instruction:'Now we mix yellow and blue LIGHT, as on a stage. Will the result be the same?' },
+      { title:'Opposite colours', instruction:'Colours across from each other on the wheel are complementary. Together they look very strong.' },
+      { title:'Neighbouring colours', instruction:'Three colours next to each other on the wheel look alike and work well together. Such a set is calm on the eye.' },
+      { title:'Monochromatic palette', instruction:'One single hue in different light: white makes it lighter, black darker, grey softer.' },
+      { title:'Done', instruction:'This is your result. Show the code to your teacher.' }
+    ],
+    task1:'Find and tap %s on the wheel.',
+    task5:'Change the text and background colours until the line is clearly readable.',
+    txtColor:'Text colour', bgColor:'Background colour', contrastLabel:'Contrast',
+    bgLightness:'Background lightness (+ white / + black)',
+    task7:'Pick two colours that sit directly opposite each other on the wheel.',
+    toneSample:'Can you read this?', darker:'darker', lighter:'lighter',
+    predict3:['Green','Orange','Violet'],
+    predict6:['Almost white','Green again','Black'],
+    asPaint:'As paint', asPaintNote:'Paints absorb light and the result darkens — you get green.',
+    asLight:'As light', asLightNote:'Light accumulates and the result brightens — almost white.',
+    secondaries:[
+      { label:'Red + yellow = orange' },
+      { label:'Yellow + blue = green' },
+      { label:'Blue + red = violet' }
+    ],
+    terms:{
+      wheel:['colour wheel','Colours arranged in a circle so you can see which sits next to which.'],
+      primary:['primary colour','A colour you cannot mix from other paints: red, yellow, blue.'],
+      secondary:['secondary colour','A colour from mixing two primaries: orange, green, violet.'],
+      pigment:['pigment','The colouring substance in paint, ink and coloured pencils.'],
+      tone:['tone','The same colour made lighter or darker.'],
+      complementary:['complementary','The colour directly opposite a given colour on the wheel.'],
+      analogous:['analogous','Three colours that sit next to each other on the wheel.'],
+      mono:['monochromatic','A palette from one hue made lighter, darker or softer.'],
+      contrast:['contrast','The difference in lightness between two colours. A big difference reads easily.']
+    },
+    right:'Correct.', wrong:'Not this one. Try again.',
+    ok1:'Correct — green sits between yellow and blue.',
+    no1:'Not yet. Look between yellow and blue.',
+    ok2:'Correct — red, yellow and blue.',
+    no2:'Not quite. Orange, green and violet come from mixing.',
+    ok3:'Correct — yellow and blue paint make green.',
+    no3:'No. Yellow and blue paint make green.',
+    ok5:'Good — the difference is large enough to read.',
+    no5:'The two colours are too close. Pick darker text or a lighter background.',
+    ok6:'Correct — lights add up and become almost white.',
+    no6:'No. As light the result is almost white, not green.',
+    ok7:'Correct — these two are complementary.',
+    no7:'These two are not opposite. Clear the selection and try again.',
+    task8:'Pick three colours that sit next to each other on the wheel.',
+    ok8:'Correct — that is an analogous set.',
+    no8:'These three are not neighbours. Clear the selection and try again.',
+    monoBase:'Pick a colour', monoModes:['Lighter','Darker','Softer'],
+    task9:'Which of the three palettes is monochromatic?',
+    ok9:'Correct — one hue, only the lightness changes.',
+    no9:'No. That palette has more than one hue.',
+    palA:'Palette 1', palB:'Palette 2', palC:'Palette 3',
+    outOf:'out of 8 points', yourName:'Your name', namePh:'name and class', codeLabel:'Code for the teacher',
+    needName:'type your name',
+    learned:'What you learned',
+    takeaways:[
+      'Colours arrange in a circle: neighbours look alike.',
+      'There are three primaries: red, yellow, blue.',
+      'Mixing paint darkens; mixing light brightens.',
+      'White makes a tone lighter, black makes it darker.',
+      'Opposite colours contrast; neighbouring colours sit calmly together.'
+    ]
+  }
+};
+
+const TH = {
+  light:{ bg:'#FBF8F1', card:'#FFFFFF', ink:'#14181D', ink2:'#4C5560', ink3:'#8B939F', edge:'#14181D', soft:'#E4DED1', good:'#137A4C', bad:'#C63030' },
+  dark:{ bg:'#101318', card:'#171B22', ink:'#F2EFE9', ink2:'#AEB6C2', ink3:'#79828F', edge:'#F2EFE9', soft:'#272D37', good:'#5FD69B', bad:'#FF8D8D' }
+};
+const STEP_TERMS = [['wheel'],['primary'],['pigment'],['secondary'],['contrast'],['pigment'],['complementary'],['analogous'],['mono','tone'],[]];
+
+function rgb(h){ const x=h.replace('#',''); return [parseInt(x.slice(0,2),16),parseInt(x.slice(2,4),16),parseInt(x.slice(4,6),16)]; }
+function hx(a){ return '#'+a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('').toUpperCase(); }
+function toward(h,target,t){ const a=rgb(h),b=rgb(target); return hx(a.map((v,i)=>v+(b[i]-v)*t)); }
+function shuffle(n){ const a=[]; for(let i=0;i<n;i++) a.push(i);
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const x=a[i]; a[i]=a[j]; a[j]=x; }
+  return a; }
+function pickOne(list){ return list[Math.floor(Math.random()*list.length)]; }
+const PAL = ['#FFFFFF','#14181D','#EE3340','#F5871F','#F2CB2E','#2EA96A','#2A84D2','#7030C0'];
+function lum(h){ const c=rgb(h).map(v=>{ const x=v/255; return x<=0.03928?x/12.92:Math.pow((x+0.055)/1.055,2.4); });
+  return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2]; }
+function contrast(a,b){ const l1=lum(a),l2=lum(b),hi=Math.max(l1,l2),lo=Math.min(l1,l2); return (hi+0.05)/(lo+0.05); }
+function randomPair(){
+  const pairs = [];
+  for(let i=0;i<PAL.length;i++) for(let j=0;j<PAL.length;j++)
+    if(i!==j && contrast(PAL[i],PAL[j]) < 3) pairs.push([i,j]);
+  return pickOne(pairs);
+}
+
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = {
+      lang:'bg', theme:'light', big:false, step:0,
+      tap:null, pa:null, pb:null, an:[], prim:[], p3:null, p6:null, revealed:[], tone:30,
+      monBase:8, monMode:0, monQ:null, tone:50,
+      t1: pickOne([2,4,6,10]), o3: shuffle(3), o6: shuffle(3), o9: shuffle(3), qHue: pickOne([0,2,6,8,10]),
+      pair: randomPair(),
+      done:{}, name:'', fb:'', fbOk:true
+    };
+  }
+
+  componentDidMount(){
+    try{
+      const raw = localStorage.getItem('ctl_prefs');
+      if(raw){ const p = JSON.parse(raw); this.setState(s => ({ lang:p.lang||s.lang, theme:p.theme||s.theme, big:!!p.big, name:p.name||'' })); }
+      const rawP = localStorage.getItem('ctl_progress');
+      if(rawP){
+        const p = JSON.parse(rawP);
+        this.setState(s => ({
+          step: typeof p.step === 'number' ? Math.max(0, Math.min(9, p.step)) : s.step,
+          done: p.done || s.done, prim: p.prim || s.prim,
+          p3: p.p3 === undefined ? s.p3 : p.p3, p6: p.p6 === undefined ? s.p6 : p.p6,
+          monQ: p.monQ === undefined ? s.monQ : p.monQ,
+          revealed: p.revealed || s.revealed, tone: typeof p.tone === 'number' ? p.tone : s.tone, pair: p.pair || s.pair,
+          monBase: typeof p.monBase === 'number' ? p.monBase : s.monBase,
+          monMode: typeof p.monMode === 'number' ? p.monMode : s.monMode,
+          t1: typeof p.t1 === 'number' ? p.t1 : s.t1,
+          o3: p.o3 || s.o3, o6: p.o6 || s.o6, o9: p.o9 || s.o9,
+          qHue: typeof p.qHue === 'number' ? p.qHue : s.qHue
+        }));
+      }
+    }catch(e){}
+  }
+
+  componentDidUpdate(){ this.saveProgress(); }
+
+  saveProgress(){
+    const s = this.state;
+    try{
+      localStorage.setItem('ctl_progress', JSON.stringify({
+        step:s.step, done:s.done, prim:s.prim, p3:s.p3, p6:s.p6, monQ:s.monQ,
+        revealed:s.revealed, tone:s.tone, pair:s.pair, monBase:s.monBase, monMode:s.monMode,
+        t1:s.t1, o3:s.o3, o6:s.o6, o9:s.o9, qHue:s.qHue
+      }));
+    }catch(e){}
+  }
+
+  save(patch){
+    this.setState(patch);
+    try{
+      const s = Object.assign({}, this.state, patch);
+      localStorage.setItem('ctl_prefs', JSON.stringify({ lang:s.lang, theme:s.theme, big:s.big, name:s.name }));
+    }catch(e){}
+  }
+
+  award(key, ok, msg){
+    this.setState(s => ({ done: ok ? Object.assign({}, s.done, { [key]: true }) : s.done, fb: msg, fbOk: ok }));
+  }
+
+  tapWheel = e => {
+    const el = e.currentTarget, r = el.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width/2), dy = e.clientY - (r.top + r.height/2);
+    if(Math.hypot(dx,dy) < r.width*0.2) return;
+    let deg = Math.atan2(dx, -dy) * 180/Math.PI;
+    if(deg < 0) deg += 360;
+    const i = Math.floor(((deg + 15) % 360) / 30);
+    this.setState({ tap: i });
+    const t = T[this.state.lang];
+    if(this.state.step === 0){ const ok = i === this.state.t1; this.award('s1', ok, ok ? t.right : t.wrong); }
+    if(this.state.step === 6){
+      this.setState(st => {
+        const first = st.pa === null || st.pb !== null;
+        const pa = first ? i : st.pa, pb = first ? null : i;
+        if(pb !== null){
+          const d = Math.abs(pa - pb), gap = Math.min(d, 12 - d);
+          const ok = gap === 6;
+          return { pa, pb, done: ok ? Object.assign({}, st.done, { s7: true }) : st.done, fb: ok ? t.ok7 : t.no7, fbOk: ok };
+        }
+        return { pa, pb, fb: '' };
+      });
+    }
+    if(this.state.step === 7){
+      this.setState(st => {
+        const has = st.an.indexOf(i) >= 0;
+        const an = has ? st.an.filter(x => x !== i) : (st.an.length >= 3 ? [i] : st.an.concat([i]));
+        if(an.length === 3){
+          const ok = an.some(start => [0,1,2].every(o => an.indexOf((start + o) % 12) >= 0));
+          return { an, done: ok ? Object.assign({}, st.done, { s8: true }) : st.done, fb: ok ? t.ok8 : t.no8, fbOk: ok };
+        }
+        return { an, fb: '' };
+      });
+    }
+  };
+
+  renderVals(){
+    const st0 = this.state, emb = !!this.props.embedded;
+    const s = emb ? Object.assign({}, st0, { lang: this.props.lang || st0.lang, theme: this.props.theme || st0.theme, big: !!this.props.big }) : st0;
+    const t = T[s.lang], th = TH[s.theme], k = s.big ? 1.45 : 1;
+    const GOOD = th.good, BAD = th.bad;
+    const step = t.steps[s.step], last = s.step === 9, total = 10;
+
+    const rootStyle = `--k:${k};--bg:${th.bg};--card:${th.card};--ink:${th.ink};--ink2:${th.ink2};--ink3:${th.ink3};--edge:${th.edge};--soft:${th.soft};background:${th.bg};color:${th.ink};min-height:100vh;font-family:Archivo,system-ui,sans-serif`;
+
+    const pill = on => `height:40px;padding:0 16px;border:none;cursor:pointer;font-size:calc(14px * var(--k));font-weight:600;background:${on?th.ink:'transparent'};color:${on?th.card:th.ink2}`;
+    const solid = `min-height:calc(48px * var(--k));padding:0 calc(22px * var(--k));border:2px solid ${th.edge};border-radius:10px;background:${th.ink};color:${th.card};font-size:calc(16px * var(--k));font-weight:700;cursor:pointer`;
+    const ghost = `min-height:calc(48px * var(--k));padding:0 calc(20px * var(--k));border:2px solid ${th.edge};border-radius:10px;background:transparent;color:${th.ink};font-size:calc(16px * var(--k));font-weight:600;cursor:pointer`;
+
+    const score = Object.keys(s.done).length;
+    const tapIdx = s.tap === null ? null : s.tap;
+    const termKeys = STEP_TERMS[s.step];
+    const openKey = s.termKey && termKeys.indexOf(s.termKey) >= 0 ? s.termKey : null;
+
+    const secondaries = [['#EE3340','#F2CB2E','#F5871F'],['#F2CB2E','#2A84D2','#2EA96A'],['#2A84D2','#EE3340','#7030C0']]
+      .map((set, i) => ({ a:set[0], b:set[1],
+        fill: s.revealed.indexOf(i) >= 0 ? set[2] : th.soft,
+        label: s.revealed.indexOf(i) >= 0 ? t.secondaries[i].label : '···',
+        reveal: () => this.setState(st => {
+          const r = st.revealed.indexOf(i) >= 0 ? st.revealed : st.revealed.concat([i]);
+          return { revealed: r };
+        })
+      }));
+
+    const baseBg = PAL[s.pair[1]];
+    const readBgHex = s.tone >= 50 ? toward(baseBg, '#FFFFFF', (s.tone - 50)/50) : toward(baseBg, '#000000', (50 - s.tone)/50);
+    const readCr = contrast(PAL[s.pair[0]], readBgHex);
+
+    const optStyle = (picked, correct, answered) => {
+      let bd = th.edge, bgc = 'transparent', fg = th.ink;
+      if(answered && correct){ bd = GOOD; bgc = 'transparent'; fg = GOOD; }
+      else if(picked){ bd = BAD; fg = BAD; }
+      return `min-height:calc(56px * var(--k));padding:calc(10px * var(--k)) calc(16px * var(--k));border:2px solid ${bd};border-radius:10px;background:${bgc};color:${fg};font-size:calc(16px * var(--k));font-weight:600;cursor:pointer`;
+    };
+
+    const predict = (which, list, right, okMsg, noMsg, key, order) => order.map(orig => ({
+      label: list[orig], style: optStyle(s[which] === orig, orig === right, s[which] !== null),
+      pick: () => { this.setState({ [which]: orig }); this.award(key, orig === right, orig === right ? okMsg : noMsg); }
+    }));
+
+    const nameSafe = (s.name || '').trim();
+    let hash = 0;
+    for(let i = 0; i < nameSafe.length; i++) hash = (hash * 31 + nameSafe.charCodeAt(i)) % 46656;
+    const answers = [s.tap, s.prim.length, s.p3, s.p6, Math.round(s.tone/5), s.pa, s.pb, s.an.join('')].join('');
+    for(let i = 0; i < answers.length; i++) hash = (hash * 31 + answers.charCodeAt(i)) % 46656;
+    const code = nameSafe ? 'CT-' + score + '-' + (hash.toString(36).toUpperCase() + '000').slice(0,3) : t.needName;
+
+    return {
+      t, rootStyle, step,
+      langBgStyle: pill(s.lang === 'bg'), langEnStyle: pill(s.lang === 'en'),
+      setBg: () => this.save({ lang:'bg' }), setEn: () => this.save({ lang:'en' }),
+      toggleTheme: () => this.save({ theme: s.theme === 'dark' ? 'light' : 'dark' }),
+      themeDotStyle: `width:14px;height:14px;border-radius:50%;background:${s.theme==='dark'?th.ink:'transparent'};border:2px solid ${th.ink2}`,
+      toggleBig: () => this.save({ big: !s.big }),
+      bigStyle: `height:40px;padding:0 16px;border:2px solid ${th.edge};border-radius:999px;background:${s.big?th.ink:'transparent'};color:${s.big?th.card:th.ink};font-size:calc(13px * var(--k));font-weight:600;cursor:pointer`,
+
+      standalone: !emb,
+      progressLabel: t.stepOf + ' ' + (s.step + 1) + ' ' + t.of + ' ' + total,
+      progressPct: Math.round((s.step + 1) / total * 100),
+      scoreLabel: score + ' / 8 ' + t.points,
+
+      hasTerms: termKeys.length > 0,
+      terms: termKeys.map(key => ({ word: t.terms[key][0],
+        open: () => this.setState({ termKey: openKey === key ? null : key }),
+        style: `min-height:40px;padding:0 14px;border:2px solid ${openKey===key?th.edge:th.soft};border-radius:999px;background:transparent;color:${th.ink};font-size:calc(14px * var(--k));font-weight:600;cursor:pointer` })),
+      termOpen: !!openKey,
+      term: openKey ? { word: t.terms[openKey][0], def: t.terms[openKey][1] } : { word:'', def:'' },
+
+      isStep1: s.step === 0, isStep2: s.step === 1, isStep3: s.step === 2, isStep4: s.step === 3,
+      isStep5: s.step === 4, isStep6: s.step === 5, isStep7: s.step === 6, isStep8: s.step === 7, isStep9: s.step === 8, isDone: last,
+
+      monoBaseChoices: [0,4,6,8,10,2].map(i => ({ hex: W[i][0],
+        select: () => this.setState({ monBase: i }),
+        style: `flex:1;min-width:44px;height:calc(44px * var(--k));border:2px solid ${s.monBase===i?th.edge:th.soft};border-radius:8px;background:${W[i][0]};cursor:pointer` })),
+      monoModeButtons: t.monoModes.map((label, i) => ({ label,
+        select: () => this.setState({ monMode: i }),
+        style: `min-height:calc(44px * var(--k));padding:0 calc(16px * var(--k));border:2px solid ${s.monMode===i?th.edge:th.soft};border-radius:999px;background:${s.monMode===i?th.ink:'transparent'};color:${s.monMode===i?th.card:th.ink};font-size:calc(14px * var(--k));font-weight:600;cursor:pointer` })),
+      monoStrip: [0,.2,.4,.6,.8].map(f => {
+        const target = s.monMode === 0 ? '#FFFFFF' : (s.monMode === 1 ? '#000000' : '#8A8F98');
+        return { hex: toward(W[s.monBase][0], target, f) };
+      }),
+      monoPalettes: (() => {
+        const q = W[s.qHue][0];
+        const monoSet = [toward(q,'#FFFFFF',.72), toward(q,'#FFFFFF',.4), q, toward(q,'#000000',.34), toward(q,'#000000',.64)];
+        const anaSet = [0,1,2,3,4].map(o => W[(s.qHue + o) % 12][0]);
+        const mixSet = [0,3,7,10,5].map(o => W[(s.qHue + o + 2) % 12][0]);
+        const sets = [monoSet, anaSet, mixSet];
+        return s.o9.map((orig, pos) => ({
+          colors: sets[orig].map(hexv => ({ hex: hexv })),
+          label: [t.palA, t.palB, t.palC][pos],
+          pick: () => { this.setState({ monQ: orig }); this.award('s9', orig === 0, orig === 0 ? t.ok9 : t.no9); },
+          style: `border:2px solid ${s.monQ === orig ? (orig === 0 ? GOOD : BAD) : th.soft};border-radius:12px;padding:calc(12px * var(--k));background:transparent;color:${th.ink};cursor:pointer;text-align:left;width:100%`
+        }));
+      })(),
+
+      wheelTap: this.tapWheel,
+      tapAngle: tapIdx === null ? 0 : tapIdx * 30,
+      markerOpacity: tapIdx === null ? '0' : '1',
+      clearTap: () => this.setState({ tap: null, pa: null, pb: null, an: [], fb: '' }),
+      clearStyle: ghost + ';margin-top:14px' + (tapIdx === null && s.pa === null && s.an.length === 0 ? ';opacity:.4;pointer-events:none' : ''),
+      anSwatches: [0,1,2].map(n => ({ hex: s.an[n] === undefined ? th.soft : W[s.an[n]][0],
+        name: s.an[n] === undefined ? '—' : W[s.an[n]][s.lang === 'en' ? 2 : 1] })),
+      pairAHex: s.pa === null ? th.soft : W[s.pa][0],
+      pairBHex: s.pb === null ? th.soft : W[s.pb][0],
+      tapName: tapIdx === null ? '?' : W[tapIdx][s.lang === 'en' ? 2 : 1],
+      tapHex: tapIdx === null ? th.soft : W[tapIdx][0],
+
+      primaryChoices: [0,4,8,2,6,10].map(i => {
+        const on = s.prim.indexOf(i) >= 0;
+        return { hex: W[i][0], name: W[i][s.lang === 'en' ? 2 : 1],
+          toggle: () => this.setState(st => ({ prim: st.prim.indexOf(i) >= 0 ? st.prim.filter(x => x !== i) : st.prim.concat([i]) })),
+          style: `padding:calc(10px * var(--k));border:2px solid ${on?th.edge:th.soft};border-radius:12px;background:${on?th.bg:'transparent'};color:${th.ink};cursor:pointer;text-align:left` };
+      }),
+      checkPrimaries: () => {
+        const ok = s.prim.length === 3 && [0,4,8].every(i => s.prim.indexOf(i) >= 0);
+        this.award('s2', ok, ok ? t.ok2 : t.no2);
+      },
+      checkBtnStyle: solid,
+
+      task1Text: t.task1.replace('%s', (W[s.t1][s.lang === 'en' ? 2 : 1]).toUpperCase()),
+      predict3: predict('p3', t.predict3, 0, t.ok3, t.no3, 's3', s.o3),
+      revealBoxStyle: `display:flex;align-items:center;justify-content:center;min-width:calc(150px * var(--k));height:calc(72px * var(--k));padding:0 12px;border:2px ${s.p3===null?'dashed':'solid'} ${th.edge};border-radius:10px;background:${s.p3===null?'transparent':'#68A168'};color:${s.p3===null?th.ink3:'#0F1115'};font-weight:700;font-size:calc(15px * var(--k))`,
+      revealText: s.p3 === null ? '?' : '#68A168',
+
+      secondaries,
+
+      readFg: PAL[s.pair[0]], readBg: readBgHex,
+      readRatio: t.contrastLabel + ' ' + readCr.toFixed(1) + ':1',
+      tone: s.tone, setTone: e => this.setState({ tone: Number(e.target.value), fb: '' }),
+      fgSwatches: PAL.map((hexv, i) => ({ hex: hexv,
+        select: () => this.setState(st => ({ pair: [i, st.pair[1]], fb: '' })),
+        style: `flex:1;min-width:34px;height:calc(40px * var(--k));border:2px solid ${s.pair[0]===i?th.edge:th.soft};border-radius:8px;background:${hexv};cursor:pointer` })),
+      bgSwatches: PAL.map((hexv, i) => ({ hex: hexv,
+        select: () => this.setState(st => ({ pair: [st.pair[0], i], tone: 50, fb: '' })),
+        style: `flex:1;min-width:34px;height:calc(40px * var(--k));border:2px solid ${s.pair[1]===i?th.edge:th.soft};border-radius:8px;background:${hexv};cursor:pointer` })),
+      checkTone: () => { const ok = readCr >= 4.5; this.award('s5', ok, ok ? t.ok5 : t.no5); },
+
+      predict6: predict('p6', t.predict6, 0, t.ok6, t.no6, 's6', s.o6),
+      shown6: s.p6 !== null,
+
+      feedback: s.fb, feedbackTone: s.fbOk ? GOOD : BAD,
+
+      finalScore: score + ' / 8',
+      name: s.name, setName: e => this.save({ name: e.target.value }),
+      code,
+      takeaways: t.takeaways.map((text, i) => ({ text, hex: ['#EE3340','#F2CB2E','#2A84D2','#2EA96A','#7030C0'][i] })),
+
+      prev: () => this.setState(st => ({ step: Math.max(0, st.step - 1), fb: '', tap: null, pa: null, pb: null, an: [], termKey: null })),
+      next: () => this.setState(st => ({ step: Math.min(9, st.step + 1), fb: '', tap: null, pa: null, pb: null, an: [], termKey: null })),
+      prevStyle: s.step === 0 ? ghost + ';opacity:.4;pointer-events:none' : ghost,
+      nextStyle: last ? solid + ';opacity:.4;pointer-events:none' : solid,
+      nextLabel: s.step === 8 ? t.finish : t.next,
+      restart: () => this.setState({ step:0, tap:null, pa:null, pb:null, an:[], prim:[], p3:null, p6:null, revealed:[], tone:30, monQ:null, done:{}, fb:'',
+        t1: pickOne([2,4,6,10]), o3: shuffle(3), o6: shuffle(3), o9: shuffle(3), qHue: pickOne([0,2,6,8,10]), pair: randomPair() }),
+      restartStyle: last ? ghost : ghost + ';display:none'
+    };
+  }
+}
+</script>
+</body>
+</html>
+

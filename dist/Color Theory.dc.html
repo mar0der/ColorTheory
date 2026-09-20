@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&amp;family=Instrument+Serif:ital@0;1&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{--bg:#FBF8F1;--surface:#FFFFFF;--ink:#14181D;--ink2:#4C5560;--ink3:#8B939F;--line:#E4DED1;--accent:#2355D9;--hot:#E23A45;
+background:var(--bg);color:var(--ink);font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+a:hover{text-decoration-thickness:2px}
+button{font-family:inherit}
+input[type=range]{-webkit-appearance:none;appearance:none;height:24px;background:transparent;cursor:pointer;color:var(--ink)}
+input[type=range]::-webkit-slider-runnable-track{height:2px;background:currentColor;opacity:.3}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-7px;border-radius:50%;background:currentColor}
+input[type=color]{-webkit-appearance:none;appearance:none;border:1px solid var(--line);border-radius:4px;width:52px;height:34px;padding:2px;background:transparent;cursor:pointer}
+input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+input[type=color]::-webkit-color-swatch{border:none;border-radius:2px}
+</style>
+</helmet>
+
+<div style="{{ rootStyle }}">
+
+<div style="position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--line)">
+  <div style="max-width:1180px;margin:0 auto;padding:0 24px">
+    <sc-if value="{{ isWide }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:20px">
+        <div style="display:flex;gap:2px;flex-wrap:wrap">
+          <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="6">
+            <button type="button" onClick="{{ tb.select }}" style="{{ tb.style }}">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;opacity:.6">{{ tb.num }}</span>
+              <span style="font-size:13px">{{ tb.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ standalone }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;gap:8px;flex:none">
+          <div style="display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden">
+            <button type="button" onClick="{{ setBg }}" style="{{ langBgStyle }}">БГ</button>
+            <button type="button" onClick="{{ setEn }}" style="{{ langEnStyle }}">EN</button>
+          </div>
+          <button type="button" onClick="{{ toggleTheme }}" title="{{ t.themeLabel }}" style="display:flex;align-items:center;gap:8px;height:30px;padding:0 13px;border:1px solid var(--line);border-radius:999px;background:transparent;color:inherit;font-size:12px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer">
+            <span style="{{ themeDotStyle }}"></span>{{ t.themeShort }}
+          </button>
+        </div>
+        </sc-if>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isNarrow }}" hint-placeholder-val="{{ false }}">
+      <div style="position:relative;display:flex;align-items:center;gap:8px;padding:8px 0">
+        <sc-if value="{{ standalone }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none;order:2">
+          <button type="button" onClick="{{ setBg }}" style="{{ langBgStyle }}">БГ</button>
+          <button type="button" onClick="{{ setEn }}" style="{{ langEnStyle }}">EN</button>
+        </div>
+        </sc-if>
+        <sc-if value="{{ standalone }}" hint-placeholder-val="{{ true }}">
+        <button type="button" onClick="{{ toggleTheme }}" title="{{ t.themeLabel }}" style="order:3;display:flex;align-items:center;justify-content:center;width:36px;height:36px;flex:none;border:1px solid var(--line);border-radius:999px;background:transparent;color:inherit;cursor:pointer">
+          <span style="{{ themeDotStyle }}"></span>
+        </button>
+        </sc-if>
+        <button type="button" onClick="{{ toggleMenu }}" style="order:1;display:flex;align-items:center;justify-content:space-between;gap:12px;flex:1;min-width:0;height:36px;padding:0 12px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:inherit;cursor:pointer">
+          <span style="display:flex;align-items:baseline;gap:8px">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink3)">{{ current.num }}</span>
+            <span style="font-size:14px">{{ current.label }}</span>
+          </span>
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1 1h16"></path><path d="M1 7h16"></path><path d="M1 13h16"></path></svg>
+        </button>
+        <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:0;right:0;top:50px;z-index:40;border:1px solid var(--line);border-radius:5px;background:var(--surface);overflow:hidden;box-shadow:0 8px 24px rgba(20,24,29,.14)">
+            <sc-for list="{{ tabs }}" as="tb" hint-placeholder-count="6">
+              <button type="button" onClick="{{ tb.select }}" style="{{ tb.menuStyle }}">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;opacity:.6">{{ tb.num }}</span>
+                <span style="font-size:14px">{{ tb.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+  </div>
+</div>
+
+<div style="max-width:1180px;margin:0 auto;padding:0 24px 80px">
+
+  <div style="padding:16px 0 14px">
+    <h1 style="margin:0 0 4px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(24px,2.6vw,32px);line-height:1.1;letter-spacing:-.015em">{{ t.h1 }}</h1>
+    <p style="margin:0;font-size:13px;line-height:1.45;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.lead }}</p>
+  </div>
+
+  <sc-if value="{{ isTab1 }}" hint-placeholder-val="{{ true }}">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:20px">
+    <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px 20px;flex-wrap:wrap;margin-bottom:16px">
+        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:24px;line-height:1.1">{{ t.s1title }}</h2>
+        <div style="display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:none">
+          <sc-for list="{{ modelModes }}" as="m" hint-placeholder-count="2">
+            <button type="button" onClick="{{ m.select }}" style="{{ m.style }}">{{ m.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center">
+        <div onPointerDown="{{ wheelDown }}" onPointerMove="{{ wheelMove }}" onPointerUp="{{ wheelUp }}" style="position:relative;width:100%;max-width:360px;aspect-ratio:1;touch-action:none;cursor:crosshair">
+          <sc-if value="{{ isSub }}" hint-placeholder-val="{{ true }}">
+            <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from -15deg,#EE3340 0deg 30deg,#F0552B 30deg 60deg,#F5871F 60deg 90deg,#F7B32B 90deg 120deg,#F2CB2E 120deg 150deg,#ADCE2B 150deg 180deg,#2EA96A 180deg 210deg,#14A5A5 210deg 240deg,#2A84D2 240deg 270deg,#3D4FC4 270deg 300deg,#7030C0 300deg 330deg,#CA3372 330deg 360deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 0 51%,#000 51.6% 100%);mask:radial-gradient(circle at 50% 50%,transparent 0 51%,#000 51.6% 100%)"></div>
+          </sc-if>
+          <sc-if value="{{ isAdd }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(from -15deg,#FF3B30 0deg 30deg,#FF8A00 30deg 60deg,#FFD500 60deg 90deg,#A8E000 90deg 120deg,#22D34C 120deg 150deg,#00D68F 150deg 180deg,#00D0D8 180deg 210deg,#0097F0 210deg 240deg,#2B5BFF 240deg 270deg,#7A3BFF 270deg 300deg,#E838E0 300deg 330deg,#FF2E86 330deg 360deg);-webkit-mask:radial-gradient(circle at 50% 50%,transparent 0 51%,#000 51.6% 100%);mask:radial-gradient(circle at 50% 50%,transparent 0 51%,#000 51.6% 100%)"></div>
+          </sc-if>
+          <div style="position:absolute;inset:0;pointer-events:none;transform:rotate({{ selAngle }}deg);transition:transform 120ms cubic-bezier(.2,0,.2,1)">
+            <div style="position:absolute;left:50%;top:6%;width:26px;height:26px;margin-left:-13px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px rgba(20,24,29,.35)"></div>
+          </div>
+          <div style="position:absolute;inset:27%;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;padding:14px;pointer-events:none">
+            <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)">{{ sel.famLabel }}</span>
+            <span style="font-family:'Instrument Serif',Georgia,serif;font-size:21px;line-height:1.1">{{ sel.name }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2)">{{ sel.hex }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink3);white-space:nowrap">H {{ sel.h }}° S {{ sel.s }}%</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;margin-top:22px">
+        <sc-for list="{{ ring }}" as="c" hint-placeholder-count="12">
+          <button type="button" onClick="{{ c.select }}" title="{{ c.name }}" style="height:26px;border:none;border-radius:2px;cursor:pointer;background:{{ c.hex }};outline:{{ c.ring }};outline-offset:2px"></button>
+        </sc-for>
+      </div>
+      <p style="margin:18px 0 0;font-size:12px;line-height:1.5;color:var(--ink3);text-wrap:pretty">{{ modelNote }}</p>
+      <p style="margin:6px 0 0;font-size:13px;line-height:1.5;color:var(--ink2);text-wrap:pretty">{{ hintCur }}</p>
+    </div>
+
+    <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:24px;display:flex;flex-direction:column;gap:18px">
+      <div>
+        <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">{{ t.s1bEyebrow }}</div>
+        <h2 style="margin:0 0 10px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:30px;line-height:1.05">{{ t.s1bTitle }}</h2>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:var(--ink2);max-width:52ch;text-wrap:pretty">{{ t.s1bBody }}</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center">
+        <button type="button" onClick="{{ focusA }}" style="{{ slotAStyle }}">
+          <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase">{{ t.slotA }}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px">{{ slotAHex }}</span>
+        </button>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:18px;color:var(--ink3)">+</span>
+        <button type="button" onClick="{{ focusB }}" style="{{ slotBStyle }}">
+          <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase">{{ t.slotB }}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px">{{ slotBHex }}</span>
+        </button>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:5px;overflow:hidden">
+        <div style="height:96px;background:{{ mixInk.hex }};transition:background 120ms cubic-bezier(.2,0,.2,1)"></div>
+        <div style="padding:14px 16px;text-align:center">
+          <div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">{{ mixLabelCur }}</div>
+          <div style="font-family:'Instrument Serif',Georgia,serif;font-size:24px;line-height:1.1">{{ mixInk.title }}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2);margin-top:4px">{{ mixInk.code }}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:auto">
+        <button type="button" onClick="{{ clearMix }}" style="flex:1;min-width:140px;height:40px;border:none;border-radius:5px;background:var(--ink);color:var(--bg);font-size:13px;letter-spacing:.02em;cursor:pointer">{{ t.clear }}</button>
+        <button type="button" onClick="{{ copyMix }}" style="flex:1;min-width:140px;height:40px;border:1px solid var(--line);border-radius:5px;background:transparent;color:inherit;font-size:13px;cursor:pointer">{{ copyMixLabel }}</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTab2 }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:start;margin-bottom:24px">
+      <div>
+        <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">{{ t.s2eyebrow }}</div>
+        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s2title }}</h2>
+      </div>
+      <p style="margin:0;font-size:15px;line-height:1.6;color:var(--ink2);max-width:52ch;text-wrap:pretty">{{ t.s2lead }}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:20px">
+      <sc-for list="{{ families }}" as="f" hint-placeholder-count="3">
+        <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:22px;display:flex;flex-direction:column;gap:16px">
+          <div>
+            <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;color:{{ f.tone }}">{{ f.eyebrow }}</div>
+            <h3 style="margin:0 0 8px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:24px;line-height:1.1">{{ f.title }}</h3>
+            <p style="margin:0;font-size:13px;line-height:1.6;color:var(--ink2);text-wrap:pretty">{{ f.body }}</p>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:auto">
+            <sc-for list="{{ f.items }}" as="c" hint-placeholder-count="3">
+              <button type="button" onClick="{{ c.select }}" style="flex:1;height:92px;border:none;border-radius:5px;cursor:pointer;display:flex;align-items:flex-end;padding:10px;text-align:left;background:{{ c.hex }};color:{{ c.fg }};font-size:10px;letter-spacing:.08em;text-transform:uppercase;line-height:1.2">{{ c.name }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTab3 }}" hint-placeholder-val="{{ false }}">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:24px;align-items:start">
+    <div>
+      <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">{{ t.s3eyebrow }}</div>
+      <h2 style="margin:0 0 14px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s3title }}</h2>
+      <p style="margin:0 0 26px;font-size:15px;line-height:1.6;color:var(--ink2);max-width:50ch;text-wrap:pretty">{{ t.s3lead }}</p>
+      <div style="border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:16px">
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:10px">{{ t.pickBase }}</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="color" value="{{ monoHex }}" onChange="{{ setMonoHex }}">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:5px">{{ monoHexUpper }}</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:10px">{{ t.variation }}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ monoModes }}" as="m" hint-placeholder-count="4">
+              <button type="button" onClick="{{ m.select }}" style="{{ m.style }}">{{ m.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1px solid var(--line);border-radius:6px;overflow:hidden">
+        <sc-for list="{{ monoScale }}" as="s" hint-placeholder-count="5">
+          <button type="button" onClick="{{ s.copy }}" title="{{ t.copyHint }}" style="height:210px;border:none;cursor:pointer;display:flex;align-items:flex-start;padding:12px 10px;background:{{ s.hex }};color:{{ s.fg }};font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:-.01em">{{ s.hex }}</button>
+        </sc-for>
+      </div>
+      <p style="margin:0;font-size:14px;line-height:1.6;color:var(--ink2);max-width:52ch;text-wrap:pretty">{{ t.s3note }}</p>
+      <button type="button" onClick="{{ copyPalette }}" style="align-self:flex-start;height:44px;padding:0 22px;border:none;border-radius:5px;background:{{ monoHex }};color:{{ monoFg }};font-size:14px;font-weight:500;cursor:pointer">{{ copyPaletteLabel }}</button>
+      <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:20px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+          <h3 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:22px">{{ t.contrastTitle }}</h3>
+          <span style="font-size:12px;color:var(--ink3)">{{ t.contrastHint }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:14px;align-items:start">
+          <div>
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px">{{ t.textColor }}</div>
+            <div style="display:flex;gap:4px">
+              <sc-for list="{{ contrastFgOptions }}" as="o" hint-placeholder-count="7">
+                <button type="button" onClick="{{ o.select }}" style="flex:1;height:30px;border:1px solid var(--line);border-radius:3px;cursor:pointer;background:{{ o.hex }};outline:{{ o.ring }};outline-offset:2px"></button>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px">{{ t.bgColor }}</div>
+            <div style="display:flex;gap:4px">
+              <sc-for list="{{ contrastBgOptions }}" as="o" hint-placeholder-count="7">
+                <button type="button" onClick="{{ o.select }}" style="flex:1;height:30px;border:1px solid var(--line);border-radius:3px;cursor:pointer;background:{{ o.hex }};outline:{{ o.ring }};outline-offset:2px"></button>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:16px;border-radius:5px;padding:18px 20px;background:{{ contrast.bg }};color:{{ contrast.fg }}">
+          <div style="font-family:'Instrument Serif',Georgia,serif;font-size:26px;line-height:1.1;margin-bottom:4px">{{ t.contrastSample }}</div>
+          <div style="font-size:13px;line-height:1.5">{{ t.contrastSampleSmall }}</div>
+        </div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:baseline;margin-top:12px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:20px">{{ contrast.ratio }}:1</span>
+          <span style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:{{ contrast.aaTone }}">AA {{ contrast.aa }}</span>
+          <span style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:{{ contrast.aaaTone }}">AAA {{ contrast.aaa }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTab4 }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:start;margin-bottom:24px">
+      <div>
+        <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--hot);margin-bottom:6px">{{ t.s4eyebrow }}</div>
+        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s4title }}</h2>
+      </div>
+      <p style="margin:0;font-size:15px;line-height:1.6;color:var(--ink2);max-width:52ch;text-wrap:pretty">{{ t.s4lead }}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px">
+      <div style="border-radius:6px;padding:24px;background:#12161C;color:#F2EFE9">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#93B4FF">{{ t.forScreens }}</div>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#F2EFE9" stroke-width="1.4"><rect x="2" y="3" width="16" height="11" rx="1.5"></rect><path d="M7 17h6"></path></svg>
+        </div>
+        <h3 style="margin:0 0 20px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:26px">{{ t.rgbTitle }}</h3>
+        <div style="position:relative;width:260px;max-width:100%;height:210px;margin:0 auto 22px">
+          <div style="position:absolute;left:8%;top:2%;width:55%;height:68%;border-radius:50%;background:#F03A3A;mix-blend-mode:screen"></div>
+          <div style="position:absolute;right:8%;top:2%;width:55%;height:68%;border-radius:50%;background:#35D97A;mix-blend-mode:screen"></div>
+          <div style="position:absolute;left:22.5%;bottom:2%;width:55%;height:68%;border-radius:50%;background:#3A6BF0;mix-blend-mode:screen"></div>
+        </div>
+        <p style="margin:0 0 18px;font-size:13px;line-height:1.65;color:#C7CEDA;text-wrap:pretty">{{ t.rgbBody }}</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ rgbChips }}" as="c" hint-placeholder-count="3">
+            <span style="font-size:12px;font-weight:500;padding:5px 14px;border-radius:999px;background:{{ c.hex }};color:{{ c.fg }}">{{ c.name }}</span>
+          </sc-for>
+        </div>
+      </div>
+      <div style="border:1px solid var(--line);border-radius:6px;padding:24px;background:var(--surface)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#B03A8A">{{ t.forPrint }}</div>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 7V3h8v4"></path><rect x="3" y="7" width="14" height="7" rx="1.5"></rect><path d="M6 14v3h8v-3"></path></svg>
+        </div>
+        <h3 style="margin:0 0 20px;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:26px">{{ t.cmyTitle }}</h3>
+        <div style="position:relative;width:260px;max-width:100%;height:210px;margin:0 auto 22px;background:#fff;border-radius:4px">
+          <div style="position:absolute;left:8%;top:2%;width:55%;height:68%;border-radius:50%;background:#19B5C4;mix-blend-mode:multiply"></div>
+          <div style="position:absolute;right:8%;top:2%;width:55%;height:68%;border-radius:50%;background:#E23C86;mix-blend-mode:multiply"></div>
+          <div style="position:absolute;left:22.5%;bottom:2%;width:55%;height:68%;border-radius:50%;background:#F2CB2E;mix-blend-mode:multiply"></div>
+        </div>
+        <p style="margin:0 0 18px;font-size:13px;line-height:1.65;color:var(--ink2);text-wrap:pretty">{{ t.cmyBody }}</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ cmyChips }}" as="c" hint-placeholder-count="3">
+            <span style="font-size:12px;font-weight:500;padding:5px 14px;border-radius:999px;background:{{ c.hex }};color:{{ c.fg }}">{{ c.name }}</span>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:24px;margin-top:20px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:18px">
+        <h3 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:24px">{{ t.simTitle }}</h3>
+        <span style="font-size:13px;color:var(--ink2);max-width:46ch;text-wrap:pretty">{{ t.simLead }}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div>
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px">{{ t.slotA }}</div>
+            <div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px">
+              <sc-for list="{{ ringA }}" as="c" hint-placeholder-count="12">
+                <button type="button" onClick="{{ c.select }}" title="{{ c.name }}" style="height:32px;border:none;border-radius:2px;cursor:pointer;background:{{ c.hex }};outline:{{ c.ring }};outline-offset:2px"></button>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px">{{ t.slotB }}</div>
+            <div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px">
+              <sc-for list="{{ ringB }}" as="c" hint-placeholder-count="12">
+                <button type="button" onClick="{{ c.select }}" title="{{ c.name }}" style="height:32px;border:none;border-radius:2px;cursor:pointer;background:{{ c.hex }};outline:{{ c.ring }};outline-offset:2px"></button>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">
+              <span>{{ t.ratio }}</span>
+              <span style="font-family:'IBM Plex Mono',monospace;letter-spacing:0">{{ ratioLabel }}</span>
+            </div>
+            <input type="range" min="0" max="100" step="5" value="{{ ratio }}" onChange="{{ setRatio }}" style="width:100%">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:14px">
+          <div style="border:1px solid var(--line);border-radius:5px;overflow:hidden">
+            <div style="height:130px;background:{{ mixLight.hex }};transition:background 120ms cubic-bezier(.2,0,.2,1)"></div>
+            <div style="padding:12px 14px">
+              <div style="font-size:13px;font-weight:600;margin-bottom:4px">{{ t.additive }}</div>
+              <div style="font-size:12px;line-height:1.5;color:var(--ink3);margin-bottom:8px">{{ t.additiveNote }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2)">{{ mixLight.hex }}</div>
+            </div>
+          </div>
+          <div style="border:1px solid var(--line);border-radius:5px;overflow:hidden">
+            <div style="height:130px;background:{{ mixPigment.hex }};transition:background 120ms cubic-bezier(.2,0,.2,1)"></div>
+            <div style="padding:12px 14px">
+              <div style="font-size:13px;font-weight:600;margin-bottom:4px">{{ t.subtractive }}</div>
+              <div style="font-size:12px;line-height:1.5;color:var(--ink3);margin-bottom:8px">{{ t.subtractiveNote }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2)">{{ mixPigment.hex }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTab5 }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:start;margin-bottom:24px">
+      <div>
+        <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px">{{ t.s5eyebrow }}</div>
+        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s5title }}</h2>
+      </div>
+      <p style="margin:0;font-size:15px;line-height:1.6;color:var(--ink2);max-width:52ch;text-wrap:pretty">{{ t.s5lead }}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;margin-bottom:20px">
+      <sc-for list="{{ ringS }}" as="c" hint-placeholder-count="12">
+        <button type="button" onClick="{{ c.select }}" title="{{ c.name }}" style="height:34px;border:none;border-radius:2px;cursor:pointer;background:{{ c.hex }};outline:{{ c.ring }};outline-offset:2px"></button>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:16px">
+      <sc-for list="{{ schemes }}" as="s" hint-placeholder-count="5">
+        <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:18px;display:flex;flex-direction:column;gap:14px">
+          <div>
+            <h3 style="margin:0 0 6px;font-size:14px;font-weight:600">{{ s.title }}</h3>
+            <p style="margin:0;font-size:12px;line-height:1.55;color:var(--ink3);text-wrap:pretty">{{ s.note }}</p>
+          </div>
+          <div style="display:flex;gap:4px;height:70px;margin-top:auto">
+            <sc-for list="{{ s.colors }}" as="c" hint-placeholder-count="3">
+              <button type="button" onClick="{{ c.copy }}" title="{{ c.name }}" style="flex:1;border:none;border-radius:4px;cursor:pointer;background:{{ c.hex }}"></button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:20px;margin-top:28px">
+      <div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
+          <span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)">{{ t.before }}</span>
+          <span style="font-size:12px;color:var(--ink3)">{{ t.beforeNote }}</span>
+        </div>
+        <div style="border:1px solid var(--line);border-radius:6px;padding:26px;background:{{ demoBefore.bg }};color:{{ demoBefore.ink }}">
+          <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;color:{{ demoBefore.eyebrow }}">{{ t.demoEyebrow }}</div>
+          <div style="font-family:'Instrument Serif',Georgia,serif;font-size:28px;line-height:1.1;margin-bottom:10px">{{ t.demoTitle }}</div>
+          <div style="font-size:13px;line-height:1.6;margin-bottom:18px">{{ t.demoBody }}</div>
+          <span style="display:inline-block;font-size:13px;padding:9px 18px;border-radius:5px;background:{{ demoBefore.accent }};color:{{ demoBefore.accentInk }}">{{ t.demoCta }}</span>
+        </div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
+          <span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)">{{ t.after }}</span>
+          <span style="font-size:12px;color:var(--ink3)">{{ t.afterNote }}</span>
+        </div>
+        <div style="border:1px solid var(--line);border-radius:6px;padding:26px;background:{{ demoAfter.bg }};color:{{ demoAfter.ink }}">
+          <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;color:{{ demoAfter.eyebrow }}">{{ t.demoEyebrow }}</div>
+          <div style="font-family:'Instrument Serif',Georgia,serif;font-size:28px;line-height:1.1;margin-bottom:10px">{{ t.demoTitle }}</div>
+          <div style="font-size:13px;line-height:1.6;margin-bottom:18px">{{ t.demoBody }}</div>
+          <span style="display:inline-block;font-size:13px;padding:9px 18px;border-radius:5px;background:{{ demoAfter.accent }};color:{{ demoAfter.accentInk }}">{{ t.demoCta }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isTab6 }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:24px;align-items:end;margin-bottom:24px">
+      <div>
+        <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--hot);margin-bottom:6px">{{ t.s6eyebrow }}</div>
+        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(28px,3.6vw,40px);line-height:1.05">{{ t.s6title }}</h2>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:16px;justify-content:flex-end;flex-wrap:wrap">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:15px">{{ quizScore }}</span>
+        <button type="button" onClick="{{ resetQuiz }}" style="height:34px;padding:0 16px;border:1px solid var(--line);border-radius:999px;background:transparent;color:inherit;font-size:13px;cursor:pointer">{{ t.reset }}</button>
+      </div>
+    </div>
+    <div style="display:grid;gap:14px">
+      <sc-for list="{{ quiz }}" as="q" hint-placeholder-count="5">
+        <div style="border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:20px 22px">
+          <div style="display:flex;gap:12px;align-items:baseline;margin-bottom:14px">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink3)">{{ q.num }}</span>
+            <span style="font-size:16px;line-height:1.4;text-wrap:pretty">{{ q.text }}</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ q.options }}" as="o" hint-placeholder-count="3">
+              <button type="button" onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <div style="font-size:13px;line-height:1.55;margin-top:12px;color:{{ q.feedbackTone }}">{{ q.feedback }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  </sc-if>
+
+  <p style="margin:56px 0 0;padding-top:24px;border-top:1px solid var(--line);font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:17px;line-height:1.5;color:var(--ink2);text-align:center;text-wrap:pretty">{{ t.tip }}</p>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;bg&quot;,&quot;en&quot;],&quot;default&quot;:&quot;bg&quot;,&quot;tsType&quot;:&quot;'bg' | 'en'&quot;},&quot;defaultTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'dark'&quot;}}">
+const RING = [
+  { hex:'#EE3340', fam:'p', bg:'Червено',            en:'Red' },
+  { hex:'#F0552B', fam:'t', bg:'Червено-оранжево',   en:'Red-orange' },
+  { hex:'#F5871F', fam:'s', bg:'Оранжево',           en:'Orange' },
+  { hex:'#F7B32B', fam:'t', bg:'Жълто-оранжево',     en:'Yellow-orange' },
+  { hex:'#F2CB2E', fam:'p', bg:'Жълто',              en:'Yellow' },
+  { hex:'#ADCE2B', fam:'t', bg:'Жълто-зелено',       en:'Yellow-green' },
+  { hex:'#2EA96A', fam:'s', bg:'Зелено',             en:'Green' },
+  { hex:'#14A5A5', fam:'t', bg:'Синьо-зелено',       en:'Blue-green' },
+  { hex:'#2A84D2', fam:'p', bg:'Синьо',              en:'Blue' },
+  { hex:'#3D4FC4', fam:'t', bg:'Синьо-виолетово',    en:'Blue-violet' },
+  { hex:'#7030C0', fam:'s', bg:'Виолетово',          en:'Violet' },
+  { hex:'#CA3372', fam:'t', bg:'Червено-виолетово',  en:'Red-violet' }
+];
+
+const RING_ADD = [
+  { hex:'#FF3B30', fam:'p', bg:'Червено',        en:'Red' },
+  { hex:'#FF8A00', fam:'t', bg:'Оранжево',       en:'Orange' },
+  { hex:'#FFD500', fam:'s', bg:'Жълто',          en:'Yellow' },
+  { hex:'#A8E000', fam:'t', bg:'Жълто-зелено',   en:'Yellow-green' },
+  { hex:'#22D34C', fam:'p', bg:'Зелено',         en:'Green' },
+  { hex:'#00D68F', fam:'t', bg:'Зелено-циан',    en:'Spring green' },
+  { hex:'#00D0D8', fam:'s', bg:'Циан',           en:'Cyan' },
+  { hex:'#0097F0', fam:'t', bg:'Азурно',         en:'Azure' },
+  { hex:'#2B5BFF', fam:'p', bg:'Синьо',          en:'Blue' },
+  { hex:'#7A3BFF', fam:'t', bg:'Виолетово',      en:'Violet' },
+  { hex:'#E838E0', fam:'s', bg:'Магента',        en:'Magenta' },
+  { hex:'#FF2E86', fam:'t', bg:'Розово',         en:'Rose' }
+];
+
+const T = {
+  bg: {
+    brand:'Студио бележка: цветът е език', themeLabel:'Смени темата', themeShort:'Тема',
+    eyebrow:'Визуален полеви наръчник',
+    h1:'Теория на цветовете.',
+    lead:'Създай по-силна палитра, като разбереш как цветовете се срещат, променят, изсветляват и потъмняват.',
+    tabs:['Смеси ги','Семействата','Хармония','Светлина и мастило','Схеми','Провери се'],
+    s1eyebrow:'01 / Смеси ги', s1title:'Цветното колело',
+    s1hint:'Избери два цвята, за да видиш цифровия им микс.',
+    s1bEyebrow:'Твоята палитра', s1bTitle:'Пробвай комбинация',
+    s1bBody:'Основните цветове са отправната точка. Смеси ги, за да откриеш вторични цветове, после комбинирай съседни нюанси за третични.',
+    slotA:'Първи цвят', slotB:'Втори цвят', empty:'избери',
+    models:['Пигмент','Светлина'],
+    modelNoteSub:'Субтрактивно: боите поглъщат светлина, затова смесването потъмнява. Колелото е червено-жълто-синьо.',
+    modelNoteAdd:'Адитивно: светлините се събират, затова смесването изсветлява. Колелото е червено-зелено-синьо.',
+    hintSub:'Избери два цвята, за да видиш как се смесват като боя.',
+    hintAdd:'Избери два цвята, за да видиш как се смесват като светлина.',
+    mixLabelSub:'Твоят пигментен микс', mixLabelAdd:'Твоят светлинен микс',
+    mixEmpty:'Избери два цвята', clear:'Изчисти избора', copy:'Копирай микса', copied:'Копирано',
+    s2eyebrow:'02 / Опознай семействата', s2title:'Три градивни елемента',
+    s2lead:'Колелото е карта: всяко цветово семейство показва как е създаден нюансът и къде стои спрямо останалите.',
+    famP:'Начална точка', famPt:'Основни цветове',
+    famPb:'Червеното, жълтото и синьото не могат да се получат чрез смесване на други традиционни бои.',
+    famS:'Равни партньори', famSt:'Вторични цветове',
+    famSb:'Смеси два основни цвята в равни количества: например червено и жълто създават оранжево.',
+    famT:'Близки братовчеди', famTt:'Третични цветове',
+    famTb:'Смеси основен цвят със съседния вторичен цвят, за да създадеш по-нюансирани междинни тонове.',
+    s3eyebrow:'03 / Създай хармония', s3title:'Монохромни схеми',
+    s3lead:'Монохромната палитра започва с един нюанс. Добави бяло за светли тонове, черно за тъмни тонове или сиво за неутрални вариации.',
+    pickBase:'Избери основен цвят', variation:'Вариация',
+    monoModes:['Скала','Изсветлени','Потъмнени','Омекотени'],
+    s3note:'Използвай най-светлата стойност за повече въздух, най-тъмната за контраст, а основния нюанс като визуална котва.',
+    copyPalette:'Копирай палитрата', copyHint:'Клик — копира стойността',
+    contrastTitle:'Проверка на контраста', contrastHint:'WCAG 2.1, нормален текст',
+    textColor:'Цвят на текста', bgColor:'Цвят на фона',
+    contrastSample:'Проба на текста', contrastSampleSmall:'Малкият текст е истинската проверка за четимост.',
+    pass:'минава', fail:'не минава',
+    s4eyebrow:'04 / Светлина и мастило', s4title:'Два начина да смесваме',
+    s4lead:'Цветът се държи различно, когато добавяме светлина и когато смесваме физически пигменти.',
+    forScreens:'За екрани', rgbTitle:'RGB / адитивен модел',
+    rgbBody:'Екраните започват от черно и добавят червена, зелена и синя светлина. Колкото повече светлина се прибавя, толкова повече се приближаваме към бяло.',
+    forPrint:'За печат', cmyTitle:'CMY / субтрактивен модел',
+    cmyBody:'Мастилата започват от бяла хартия и поглъщат светлина. Смесването на циан, магента и жълто прави резултата по-тъмен; в печата се добавя и черно.',
+    rgb:['Червено','Зелено','Синьо'], cmy:['Циан','Магента','Жълто'],
+    simTitle:'Сравни двата модела', simLead:'Един и същ избор, смесен като светлина и като пигмент.',
+    ratio:'Съотношение', additive:'Светлина — адитивно', additiveNote:'Екран, прожектор, сцена',
+    subtractive:'Пигмент — субтрактивно', subtractiveNote:'Боя, мастило, цветен молив',
+    s5eyebrow:'05 / Подреди ги', s5title:'Цветови схеми',
+    s5lead:'Избери нюанс и виж петте класически съотношения, изчислени спрямо него.',
+    schemes:['Комплементарна','Аналогична','Триадична','Разделно-комплементарна','Тетрадична'],
+    schemeNotes:['Два срещуположни нюанса. Максимално напрежение — използвай втория пестеливо.',
+      'Три съседни нюанса. Спокойна палитра, лесно се разчита.',
+      'Три равномерно отдалечени нюанса. Живо, но балансирано.',
+      'Комплементарната, разделена на две. Контраст без резкост.',
+      'Две комплементарни двойки. Мощно, но иска водещ цвят.'],
+    before:'Преди', beforeNote:'три цвята с еднаква сила',
+    after:'След', afterNote:'60 / 30 / 10 от схемата',
+    demoEyebrow:'Изложба', demoTitle:'Пигмент и хартия', 
+    demoBody:'Един и същ текст, една и съща подредба. Различава се само разпределението на цвета.',
+    demoCta:'Виж програмата',
+    s6eyebrow:'06 / Провери се', s6title:'Пет въпроса', reset:'Започни отначало',
+    score:'Резултат',
+    quiz:[
+      { q:'Кои са основните цветове в традиционния художнически кръг?', o:['Червено, жълто, синьо','Червено, зелено, синьо','Циан, магента, жълто'], a:0,
+        ok:'Точно. Те не се получават чрез смесване на други бои.', no:'Червено, зелено и синьо са основните за светлина, не за пигмент.' },
+      { q:'Смесването на кои два основни цвята дава зелено?', o:['Жълто и синьо','Червено и синьо','Червено и жълто'], a:0,
+        ok:'Точно. Червено и синьо дават виолетово, червено и жълто — оранжево.', no:'Провери в колелото: зеленото стои между жълтото и синьото.' },
+      { q:'Кой модел описва смесването на светлина?', o:['Адитивен','Субтрактивен','Монохромен'], a:0,
+        ok:'Точно. Светлината се събира и върви към бяло.', no:'Субтрактивният е за мастила и бои — те поглъщат светлина.' },
+      { q:'Какво добавяш към нюанс, за да получиш по-светъл тон?', o:['Бяло','Черно','Сиво'], a:0,
+        ok:'Точно. Черното дава тъмен тон, сивото — омекотен.', no:'Бялото изсветлява; черното потъмнява, сивото намалява наситеността.' },
+      { q:'Комплементарните цветове стоят...', o:['Един срещу друг на колелото','Един до друг на колелото','На едно и също място'], a:0,
+        ok:'Точно. Затова контрастът им е най-силен.', no:'Съседните нюанси са аналогични, не комплементарни.' }
+    ],
+    tip:'Съвет: цветовите отношения са ориентир, не правило. Остави окото ти да има последната дума.'
+  },
+  en: {
+    brand:'Studio note: colour is a language', themeLabel:'Switch theme', themeShort:'Theme',
+    eyebrow:'Visual field guide',
+    h1:'Colour theory, visible at a glance.',
+    lead:'Build a stronger palette by understanding how colours meet, shift, lighten and darken.',
+    tabs:['Mix them','The families','Harmony','Light and ink','Schemes','Check yourself'],
+    s1eyebrow:'01 / Mix them', s1title:'The colour wheel',
+    s1hint:'Pick two colours to see their digital mix.',
+    s1bEyebrow:'Your palette', s1bTitle:'Try a combination',
+    s1bBody:'The primaries are the starting point. Mix them to find the secondaries, then combine neighbouring hues for tertiaries.',
+    slotA:'First colour', slotB:'Second colour', empty:'pick',
+    models:['Pigment','Light'],
+    modelNoteSub:'Subtractive: paints absorb light, so mixing darkens. The wheel is red-yellow-blue.',
+    modelNoteAdd:'Additive: light accumulates, so mixing lightens. The wheel is red-green-blue.',
+    hintSub:'Pick two colours to see how they mix as paint.',
+    hintAdd:'Pick two colours to see how they mix as light.',
+    mixLabelSub:'Your pigment mix', mixLabelAdd:'Your light mix',
+    mixEmpty:'Pick two colours', clear:'Clear selection', copy:'Copy the mix', copied:'Copied',
+    s2eyebrow:'02 / Know the families', s2title:'Three building blocks',
+    s2lead:'The wheel is a map: each colour family shows how a hue was made and where it sits against the rest.',
+    famP:'Starting point', famPt:'Primary colours',
+    famPb:'Red, yellow and blue cannot be produced by mixing other traditional paints.',
+    famS:'Equal partners', famSt:'Secondary colours',
+    famSb:'Mix two primaries in equal amounts: red and yellow, for instance, create orange.',
+    famT:'Close cousins', famTt:'Tertiary colours',
+    famTb:'Mix a primary with the secondary next to it to create more nuanced in-between tones.',
+    s3eyebrow:'03 / Build harmony', s3title:'Monochromatic schemes',
+    s3lead:'A monochromatic palette starts with one hue. Add white for tints, black for shades, or grey for neutral variations.',
+    pickBase:'Pick a base colour', variation:'Variation',
+    monoModes:['Scale','Tints','Shades','Tones'],
+    s3note:'Use the lightest value for air, the darkest for contrast, and the base hue as the visual anchor.',
+    copyPalette:'Copy the palette', copyHint:'Click to copy the value',
+    contrastTitle:'Contrast check', contrastHint:'WCAG 2.1, body text',
+    textColor:'Text colour', bgColor:'Background colour',
+    contrastSample:'Sample of the text', contrastSampleSmall:'Small text is the real test of legibility.',
+    pass:'pass', fail:'fail',
+    s4eyebrow:'04 / Light and ink', s4title:'Two ways of mixing',
+    s4lead:'Colour behaves differently when we add light and when we mix physical pigments.',
+    forScreens:'For screens', rgbTitle:'RGB / additive model',
+    rgbBody:'Screens start from black and add red, green and blue light. The more light is added, the closer the result gets to white.',
+    forPrint:'For print', cmyTitle:'CMY / subtractive model',
+    cmyBody:'Inks start from white paper and absorb light. Mixing cyan, magenta and yellow makes the result darker; print adds black as well.',
+    rgb:['Red','Green','Blue'], cmy:['Cyan','Magenta','Yellow'],
+    simTitle:'Compare the two models', simLead:'The same pick, mixed as light and as pigment.',
+    ratio:'Ratio', additive:'Light — additive', additiveNote:'Screen, projector, stage',
+    subtractive:'Pigment — subtractive', subtractiveNote:'Paint, ink, coloured pencil',
+    s5eyebrow:'05 / Arrange them', s5title:'Colour schemes',
+    s5lead:'Pick a hue and see the five classic relationships calculated against it.',
+    schemes:['Complementary','Analogous','Triadic','Split-complementary','Tetradic'],
+    schemeNotes:['Two opposite hues. Maximum tension — use the second one sparingly.',
+      'Three neighbouring hues. A calm palette, easy to read.',
+      'Three evenly spaced hues. Lively but balanced.',
+      'The complementary pair, split in two. Contrast without harshness.',
+      'Two complementary pairs. Powerful, but it needs a lead colour.'],
+    before:'Before', beforeNote:'three colours at equal strength',
+    after:'After', afterNote:'60 / 30 / 10 from the scheme',
+    demoEyebrow:'Exhibition', demoTitle:'Pigment and paper',
+    demoBody:'The same text, the same layout. Only the distribution of colour differs.',
+    demoCta:'See the programme',
+    s6eyebrow:'06 / Check yourself', s6title:'Five questions', reset:'Start again',
+    score:'Score',
+    quiz:[
+      { q:'Which are the primary colours on the traditional artist wheel?', o:['Red, yellow, blue','Red, green, blue','Cyan, magenta, yellow'], a:0,
+        ok:'Correct. They cannot be produced by mixing other paints.', no:'Red, green and blue are the primaries of light, not of pigment.' },
+      { q:'Mixing which two primaries produces green?', o:['Yellow and blue','Red and blue','Red and yellow'], a:0,
+        ok:'Correct. Red and blue make violet, red and yellow make orange.', no:'Check the wheel: green sits between yellow and blue.' },
+      { q:'Which model describes the mixing of light?', o:['Additive','Subtractive','Monochromatic'], a:0,
+        ok:'Correct. Light accumulates and moves towards white.', no:'Subtractive is for inks and paints — they absorb light.' },
+      { q:'What do you add to a hue to get a lighter tint?', o:['White','Black','Grey'], a:0,
+        ok:'Correct. Black gives a shade, grey gives a tone.', no:'White lightens; black darkens and grey reduces saturation.' },
+      { q:'Complementary colours sit...', o:['Opposite each other on the wheel','Next to each other on the wheel','In the same position'], a:0,
+        ok:'Correct. That is why their contrast is strongest.', no:'Neighbouring hues are analogous, not complementary.' }
+    ],
+    tip:'Tip: colour relationships are a guide, not a rule. Let your eye have the last word.'
+  }
+};
+
+const THEMES = {
+  light:{ bg:'#FBF8F1', surface:'#FFFFFF', ink:'#14181D', ink2:'#4C5560', ink3:'#8B939F', line:'#E4DED1', accent:'#2355D9', hot:'#E23A45' },
+  dark:{ bg:'#101318', surface:'#171B22', ink:'#F2EFE9', ink2:'#AEB6C2', ink3:'#79828F', line:'#272D37', accent:'#8CA8FF', hot:'#FF7078' }
+};
+
+function rgb(hex){ const h=hex.replace('#',''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+function hex(a){ return '#'+a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('').toUpperCase(); }
+function mixTo(h,target,t){ const a=rgb(h),b=rgb(target); return hex(a.map((v,i)=>v+(b[i]-v)*t)); }
+function hsl(h){ const [r,g,b]=rgb(h).map(v=>v/255); const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn; let H=0;
+  if(d){ if(mx===r)H=((g-b)/d+(g<b?6:0)); else if(mx===g)H=(b-r)/d+2; else H=(r-g)/d+4; H*=60; }
+  const L=(mx+mn)/2, S=d?d/(1-Math.abs(2*L-1)):0;
+  return { h:Math.round(H), s:Math.round(S*100), l:Math.round(L*100) }; }
+function lum(h){ const c=rgb(h).map(v=>{ const s=v/255; return s<=0.03928?s/12.92:Math.pow((s+0.055)/1.055,2.4); }); return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2]; }
+function ratioOf(a,b){ const l1=lum(a),l2=lum(b); const hi=Math.max(l1,l2),lo=Math.min(l1,l2); return (hi+0.05)/(lo+0.05); }
+function ink(h){ return ratioOf('#14181D',h) >= ratioOf('#FFFFFF',h) ? '#14181D' : '#FFFFFF'; }
+function mixLightHex(a,b,t){ const x=rgb(a),y=rgb(b), wa=Math.min(1,2*(1-t)), wb=Math.min(1,2*t);
+  return hex(x.map((v,i)=>Math.min(255,v*wa+y[i]*wb))); }
+function mixPigmentHex(a,b,t){ const x=rgb(a),y=rgb(b);
+  return hex(x.map((v,i)=>255-Math.sqrt((1-t)*Math.pow(255-v,2)+t*Math.pow(255-y[i],2)))); }
+
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = {
+      lang: props.defaultLang === 'en' ? 'en' : 'bg',
+      theme: props.defaultTheme === 'dark' ? 'dark' : 'light',
+      tab: 0, sel: 8, a: null, b: null, next: 'a',
+      w: typeof window === 'undefined' ? 1200 : window.innerWidth, menuOpen: false, model: 'sub',
+      simA: 8, simB: 4, ratio: 50,
+      monoHex: '#2355D9', monoMode: 0,
+      cFg: 0, cBg: 4,
+      quiz: {}, copied: ''
+    };
+  }
+
+  componentDidMount(){
+    try{
+      const raw = localStorage.getItem('ct_prefs');
+      if(raw){ const p = JSON.parse(raw);
+        this.setState(s => ({ lang: p.lang || s.lang, theme: p.theme || s.theme })); }
+    }catch(e){}
+    this._onResize = () => this.setState({ w: window.innerWidth });
+    window.addEventListener('resize', this._onResize);
+  }
+
+  componentWillUnmount(){
+    if(this._onResize) window.removeEventListener('resize', this._onResize);
+    clearTimeout(this._ct);
+  }
+
+  persist(next){
+    try{ localStorage.setItem('ct_prefs', JSON.stringify({ lang: next.lang, theme: next.theme })); }catch(e){}
+  }
+
+  setLang = l => this.setState(s => { const n = { lang: l }; this.persist({ lang: l, theme: s.theme }); return n; });
+  toggleTheme = () => this.setState(s => { const th = s.theme === 'dark' ? 'light' : 'dark'; this.persist({ lang: s.lang, theme: th }); return { theme: th }; });
+
+  flash(key){ this.setState({ copied: key }); clearTimeout(this._ct); this._ct = setTimeout(() => this.setState({ copied: '' }), 1400); }
+  clip(text, key){ try{ navigator.clipboard.writeText(text); }catch(e){} this.flash(key); }
+
+  pick(i){
+    this.setState(s => {
+      const patch = { sel: i };
+      if(s.next === 'a'){ patch.a = i; patch.next = 'b'; } else { patch.b = i; patch.next = 'a'; }
+      return patch;
+    });
+  }
+
+  angleToIndex(e, el){
+    const r = el.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width/2), dy = e.clientY - (r.top + r.height/2);
+    if(Math.hypot(dx,dy) < r.width*0.24) return null;
+    let deg = Math.atan2(dx, -dy) * 180/Math.PI;
+    if(deg < 0) deg += 360;
+    return Math.floor(((deg + 15) % 360) / 30);
+  }
+
+  wheelDown = e => {
+    const i = this.angleToIndex(e, e.currentTarget);
+    this._drag = true; this._dragged = false; this._downIdx = i;
+    if(i !== null) this.setState({ sel: i });
+    try{ e.currentTarget.setPointerCapture(e.pointerId); }catch(err){}
+  };
+  wheelMove = e => {
+    if(!this._drag) return;
+    const i = this.angleToIndex(e, e.currentTarget);
+    if(i !== null && i !== this.state.sel){ this._dragged = true; this.setState({ sel: i }); }
+  };
+  wheelUp = e => {
+    if(!this._drag) return;
+    this._drag = false;
+    const i = this.angleToIndex(e, e.currentTarget);
+    const idx = i === null ? this.state.sel : i;
+    this.pick(idx);
+  };
+
+  setModel = m => {
+    this.setState(s => {
+      if(s.model === m) return null;
+      const from = s.model === 'add' ? RING_ADD : RING;
+      const to = m === 'add' ? RING_ADD : RING;
+      const near = i => {
+        if(i === null || i === undefined) return i;
+        const h = hsl(from[i].hex).h;
+        let best = 0, bd = 999;
+        to.forEach((c, j) => {
+          const d0 = Math.abs(hsl(c.hex).h - h), d = Math.min(d0, 360 - d0);
+          if(d < bd){ bd = d; best = j; }
+        });
+        return best;
+      };
+      return { model: m, sel: near(s.sel), a: near(s.a), b: near(s.b), simA: near(s.simA), simB: near(s.simB) };
+    });
+  };
+
+  monoList(){
+    const base = this.state.monoHex, m = this.state.monoMode;
+    if(m === 1) return [base, mixTo(base,'#FFFFFF',.2), mixTo(base,'#FFFFFF',.4), mixTo(base,'#FFFFFF',.62), mixTo(base,'#FFFFFF',.84)];
+    if(m === 2) return [base, mixTo(base,'#000000',.2), mixTo(base,'#000000',.4), mixTo(base,'#000000',.6), mixTo(base,'#000000',.8)];
+    if(m === 3) return [base, mixTo(base,'#8A8F98',.22), mixTo(base,'#8A8F98',.42), mixTo(base,'#8A8F98',.62), mixTo(base,'#8A8F98',.82)];
+    return [mixTo(base,'#FFFFFF',.72), mixTo(base,'#FFFFFF',.38), base, mixTo(base,'#000000',.4), mixTo(base,'#000000',.72)];
+  }
+
+  renderVals(){
+    const st0 = this.state, emb = !!this.props.embedded;
+    const s = emb ? Object.assign({}, st0, { lang: this.props.lang || st0.lang, theme: this.props.theme || st0.theme }) : st0;
+    const t = T[s.lang], th = THEMES[s.theme];
+    const add = s.model === 'add';
+    const W = add ? RING_ADD : RING;
+    const name = i => W[i][s.lang === 'en' ? 'en' : 'bg'];
+    const selHex = W[s.sel].hex, sh = hsl(selHex);
+    const famLabel = { p: t.famPt, s: t.famSt, t: t.famTt }[W[s.sel].fam];
+
+    const rootStyle = `--bg:${th.bg};--surface:${th.surface};--ink:${th.ink};--ink2:${th.ink2};--ink3:${th.ink3};--line:${th.line};--accent:${th.accent};--hot:${th.hot};background:${th.bg};color:${th.ink};min-height:100vh;font-family:'Instrument Sans',system-ui,sans-serif`;
+
+    const langBtn = on => `height:30px;padding:0 13px;border:none;cursor:pointer;font-size:12px;letter-spacing:.06em;background:${on?th.ink:'transparent'};color:${on?th.bg:th.ink2}`;
+
+    const narrow = s.w < 820;
+    const tabs = t.tabs.map((label, i) => ({
+      label, num: '0' + (i+1), select: () => this.setState({ tab: i, menuOpen: false }),
+      style: `display:flex;align-items:center;gap:7px;padding:10px 14px;border:none;background:transparent;cursor:pointer;color:${s.tab===i?th.ink:th.ink3};border-bottom:2px solid ${s.tab===i?th.ink:'transparent'};margin-bottom:-1px`,
+      menuStyle: `display:flex;align-items:baseline;gap:9px;width:100%;padding:13px 14px;border:none;border-bottom:1px solid ${th.line};background:${s.tab===i?th.bg:'transparent'};color:${s.tab===i?th.ink:th.ink2};cursor:pointer;text-align:left`
+    }));
+
+    const ringFor = (activeIdx, onPick) => W.map((c, i) => ({
+      hex: c.hex, name: name(i), ring: i === activeIdx ? `2px solid ${th.ink}` : 'none',
+      select: () => onPick(i)
+    }));
+
+    const famCard = (key, fam, tone, idxs) => ({
+      eyebrow: t['fam' + key], title: t['fam' + key + 't'], body: t['fam' + key + 'b'], tone,
+      items: idxs.map(i => ({ hex: RING[i].hex, name: name(i), fg: ink(RING[i].hex), select: () => this.setState({ sel: i, tab: 0 }) }))
+    });
+
+    const aHex = s.a === null ? null : W[s.a].hex, bHex = s.b === null ? null : W[s.b].hex;
+    const bothPicked = aHex && bHex;
+    const inkMix = bothPicked ? (add ? mixLightHex(aHex, bHex, .5) : mixPigmentHex(aHex, bHex, .5)) : null;
+
+    const mono = this.monoList();
+    const cOpts = mono.concat(['#FFFFFF', '#101318']);
+    const cFg = cOpts[Math.min(s.cFg, cOpts.length-1)], cBg = cOpts[Math.min(s.cBg, cOpts.length-1)];
+    const cr = ratioOf(cFg, cBg);
+    const badge = ok => (ok ? t.pass : t.fail);
+
+    const simAHex = W[s.simA].hex, simBHex = W[s.simB].hex, rt = s.ratio/100;
+
+    const schemeSets = [[0,6],[-1,0,1],[0,4,8],[0,5,7],[0,3,6,9]];
+    const schemes = schemeSets.map((offs, k) => ({
+      title: t.schemes[k], note: t.schemeNotes[k],
+      colors: offs.map(o => { const i = ((s.sel + o) % 12 + 12) % 12;
+        return { hex: W[i].hex, name: name(i), copy: () => this.clip(W[i].hex, 'sch') }; })
+    }));
+
+    const cIdx = o => ((s.sel + o) % 12 + 12) % 12;
+    const lead = W[s.sel].hex, second = W[cIdx(5)].hex, third = W[cIdx(6)].hex;
+    const demoBefore = { bg: second, ink: ink(second), accent: third, accentInk: ink(third), eyebrow: ink(second) };
+    const softBg = mixTo(lead, '#FFFFFF', .88);
+    const demoAfter = { bg: softBg, ink: mixTo(lead, '#000000', .62), accent: lead, accentInk: ink(lead), eyebrow: mixTo(lead, '#000000', .42) };
+
+    const answered = Object.keys(s.quiz).length;
+    const correct = t.quiz.reduce((n, q, i) => n + (s.quiz[i] === q.a ? 1 : 0), 0);
+
+    const quiz = t.quiz.map((q, i) => {
+      const given = s.quiz[i];
+      const done = given !== undefined;
+      const right = done && given === q.a;
+      return {
+        num: '0' + (i+1), text: q.q,
+        feedback: done ? (right ? q.ok : q.no) : '',
+        feedbackTone: right ? '#2E8F5E' : th.hot,
+        options: q.o.map((label, oi) => {
+          const chosen = given === oi;
+          let bg = 'transparent', fg = th.ink, bd = th.line;
+          if(done && oi === q.a){ bg = '#E6F3EC'; fg = '#1F6B48'; bd = '#8FC7AC'; }
+          else if(chosen){ bg = 'transparent'; fg = th.hot; bd = th.hot; }
+          if(s.theme === 'dark' && done && oi === q.a){ bg = 'rgba(46,169,106,.16)'; fg = '#6ED49E'; bd = '#2E8F5E'; }
+          return { label, pick: () => this.setState(st => ({ quiz: Object.assign({}, st.quiz, { [i]: oi }) })),
+            style: `padding:9px 16px;border:1px solid ${bd};border-radius:5px;background:${bg};color:${fg};font-size:13px;cursor:${done?'default':'pointer'};text-align:left` };
+        })
+      };
+    });
+
+    return {
+      t, rootStyle,
+      langBgStyle: langBtn(s.lang === 'bg'), langEnStyle: langBtn(s.lang === 'en'),
+      setBg: () => this.setLang('bg'), setEn: () => this.setLang('en'),
+      toggleTheme: this.toggleTheme,
+      themeDotStyle: `width:11px;height:11px;border-radius:50%;background:${s.theme === 'dark' ? th.ink : 'transparent'};border:1.5px solid ${th.ink2}`,
+      standalone: !emb,
+      stickyStyle: `position:sticky;top:${emb ? (this.props.stickyTop || 55) : 0}px;z-index:30;background:${th.bg};border-bottom:1px solid ${th.line}`,
+      tabs, isWide: !narrow, isNarrow: narrow, menuOpen: s.menuOpen,
+      current: { num: '0' + (s.tab + 1), label: t.tabs[s.tab] },
+      toggleMenu: () => this.setState(st => ({ menuOpen: !st.menuOpen })),
+      isTab1: s.tab === 0, isTab2: s.tab === 1, isTab3: s.tab === 2, isTab4: s.tab === 3, isTab5: s.tab === 4, isTab6: s.tab === 5,
+
+      sel: { hex: selHex, name: name(s.sel), famLabel, h: sh.h, s: sh.s, l: sh.l },
+      selAngle: s.sel * 30,
+      isSub: !add, isAdd: add,
+      hintCur: add ? t.hintAdd : t.hintSub,
+      mixLabelCur: add ? t.mixLabelAdd : t.mixLabelSub,
+      modelNote: add ? t.modelNoteAdd : t.modelNoteSub,
+      modelModes: t.models.map((label, i) => {
+        const on = (i === 1) === add;
+        return { label, select: () => this.setModel(i === 1 ? 'add' : 'sub'),
+          style: `height:32px;padding:0 18px;border:none;cursor:pointer;font-size:13px;background:${on?th.ink:'transparent'};color:${on?th.bg:th.ink2}` };
+      }),
+      ring: ringFor(s.sel, i => this.pick(i)),
+      wheelDown: this.wheelDown, wheelMove: this.wheelMove, wheelUp: this.wheelUp,
+
+      slotAHex: aHex || t.empty, slotBHex: bHex || t.empty,
+      slotAStyle: `display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding:12px 14px;height:76px;justify-content:center;border:1px ${aHex?'solid':'dashed'} ${s.next==='a'?th.accent:th.line};border-radius:5px;cursor:pointer;background:${aHex||'transparent'};color:${aHex?ink(aHex):th.ink3}`,
+      slotBStyle: `display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding:12px 14px;height:76px;justify-content:center;border:1px ${bHex?'solid':'dashed'} ${s.next==='b'?th.accent:th.line};border-radius:5px;cursor:pointer;background:${bHex||'transparent'};color:${bHex?ink(bHex):th.ink3}`,
+      focusA: () => this.setState({ next: 'a' }), focusB: () => this.setState({ next: 'b' }),
+      mixInk: { hex: inkMix || 'transparent', title: bothPicked ? (name(s.a) + ' + ' + name(s.b)) : t.mixEmpty, code: inkMix || '—' },
+      clearMix: () => this.setState({ a: null, b: null, next: 'a' }),
+      copyMix: () => this.clip(inkMix || '', 'mix'),
+      copyMixLabel: s.copied === 'mix' ? t.copied : t.copy,
+
+      families: [ famCard('P', 'p', th.hot, [0,4,8]), famCard('S', 's', '#2E8F5E', [2,6,10]), famCard('T', 't', '#7030C0', [11,7,5]) ],
+
+      monoHex: s.monoHex, monoHexUpper: s.monoHex.toUpperCase(), monoFg: ink(s.monoHex),
+      setMonoHex: e => this.setState({ monoHex: e.target.value }),
+      monoModes: t.monoModes.map((label, i) => ({ label,
+        select: () => this.setState({ monoMode: i }),
+        style: `padding:8px 14px;border:1px solid ${s.monoMode===i?th.ink:th.line};border-radius:999px;background:${s.monoMode===i?th.ink:'transparent'};color:${s.monoMode===i?th.bg:th.ink2};font-size:13px;cursor:pointer` })),
+      monoScale: mono.map(h => ({ hex: h, fg: ink(h), copy: () => this.clip(h, 'sw') })),
+      copyPalette: () => this.clip(mono.join('  '), 'pal'),
+      copyPaletteLabel: s.copied === 'pal' ? t.copied : t.copyPalette,
+
+      contrastFgOptions: cOpts.map((h, i) => ({ hex: h, ring: i === s.cFg ? `2px solid ${th.ink}` : 'none', select: () => this.setState({ cFg: i }) })),
+      contrastBgOptions: cOpts.map((h, i) => ({ hex: h, ring: i === s.cBg ? `2px solid ${th.ink}` : 'none', select: () => this.setState({ cBg: i }) })),
+      contrast: { fg: cFg, bg: cBg, ratio: cr.toFixed(2),
+        aa: badge(cr >= 4.5), aaa: badge(cr >= 7),
+        aaTone: cr >= 4.5 ? '#2E8F5E' : th.hot, aaaTone: cr >= 7 ? '#2E8F5E' : th.hot },
+
+      rgbChips: ['#F03A3A','#35D97A','#3A6BF0'].map((h, i) => ({ hex: h, name: t.rgb[i], fg: ink(h) })),
+      cmyChips: ['#19B5C4','#E23C86','#F2CB2E'].map((h, i) => ({ hex: h, name: t.cmy[i], fg: ink(h) })),
+      ringA: ringFor(s.simA, i => this.setState({ simA: i })),
+      ringB: ringFor(s.simB, i => this.setState({ simB: i })),
+      ratio: s.ratio, ratioLabel: (100 - s.ratio) + ' / ' + s.ratio,
+      setRatio: e => this.setState({ ratio: Number(e.target.value) }),
+      mixLight: { hex: mixLightHex(simAHex, simBHex, rt) },
+      mixPigment: { hex: mixPigmentHex(simAHex, simBHex, rt) },
+
+      ringS: ringFor(s.sel, i => this.setState({ sel: i })),
+      schemes, demoBefore, demoAfter,
+
+      quiz, quizScore: t.score + ' ' + correct + ' / ' + t.quiz.length,
+      resetQuiz: () => this.setState({ quiz: {} })
+    };
+  }
+}
+</script>
+</body>
+</html>
+

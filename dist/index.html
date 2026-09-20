@@ -1,117 +1,122 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0b0d12" />
-    <meta name="description" content="An interactive bilingual studio for learning color theory." />
-    <title>Hue / Нюанс — Color theory studio</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="stylesheet" href="/styles.css" />
-  </head>
-  <body>
-    <div class="app-shell">
-      <header class="topbar">
-        <a class="brand" href="/" aria-label="Hue home">
-          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span><strong>HUE</strong><small>/ НЮАНС</small></span>
-        </a>
-        <nav class="topnav" aria-label="Primary navigation">
-          <a href="#lab" data-i18n="navLab">Color lab</a>
-          <a href="#principles" data-i18n="navPrinciples">Principles</a>
-        </nav>
-        <button class="language-toggle" id="languageToggle" type="button" aria-label="Switch language">
-          <span class="language-option is-active" data-lang="en">EN</span>
-          <span class="language-divider">/</span>
-          <span class="language-option" data-lang="bg">BG</span>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Color Theory / Теория на цветовете</title>
+<meta name="description" content="An interactive color theory lab and practice studio in Bulgarian and English.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:#FBF8F1;-webkit-font-smoothing:antialiased}
+a{color:#2355D9;text-decoration:underline;text-underline-offset:2px}
+a:hover{text-decoration-thickness:2px}
+</style>
+</helmet>
+
+<div style="{{ rootStyle }}">
+
+  <div style="position:sticky;top:0;z-index:50;background:{{ bgc }};border-bottom:1px solid {{ line }}">
+    <div style="max-width:1180px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:20px;min-width:0;flex-wrap:wrap">
+        <span style="font-family:'Instrument Serif',Georgia,serif;font-size:20px;line-height:1.1;white-space:nowrap">{{ title }}</span>
+        <div style="display:flex;gap:4px">
+          <sc-for list="{{ modes }}" as="m" hint-placeholder-count="2">
+            <button type="button" onClick="{{ m.select }}" style="{{ m.style }}">{{ m.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex:none">
+        <sc-if value="{{ isPractice }}" hint-placeholder-val="{{ false }}">
+          <button type="button" onClick="{{ toggleBig }}" style="{{ bigStyle }}">{{ projectorLabel }}</button>
+        </sc-if>
+        <div style="display:flex;border:1px solid {{ line }};border-radius:999px;overflow:hidden">
+          <button type="button" onClick="{{ setBg }}" style="{{ langBgStyle }}">БГ</button>
+          <button type="button" onClick="{{ setEn }}" style="{{ langEnStyle }}">EN</button>
+        </div>
+        <button type="button" onClick="{{ toggleTheme }}" title="{{ themeLabel }}" style="{{ themeBtnStyle }}">
+          <span style="{{ themeDotStyle }}"></span>
         </button>
-      </header>
-
-      <main>
-        <section class="intro" id="lab">
-          <div class="eyebrow"><span class="eyebrow-line"></span><span data-i18n="eyebrow">A visual guide to color</span></div>
-          <h1 data-i18n="headline">Make color<br /><em>click.</em></h1>
-          <p class="intro-copy" data-i18n="introCopy">Build a palette, see the relationship, and learn the logic behind every combination.</p>
-        </section>
-
-        <section class="lab-grid" aria-label="Interactive color lab">
-          <div class="panel wheel-panel">
-            <div class="panel-heading">
-              <div>
-                <span class="panel-kicker" data-i18n="labKicker">01 / Choose a base</span>
-                <h2 data-i18n="wheelTitle">Color wheel</h2>
-              </div>
-              <span class="live-label"><span class="live-dot"></span><span data-i18n="live">Live</span></span>
-            </div>
-            <div class="wheel-stage">
-              <div class="color-wheel" id="colorWheel" role="slider" aria-label="Base hue" aria-valuemin="0" aria-valuemax="360" aria-valuenow="204" tabindex="0">
-                <div class="wheel-marker" id="wheelMarker"></div>
-                <div class="wheel-core" id="wheelCore"><span id="wheelCoreValue">#38BDF8</span></div>
-              </div>
-              <div class="wheel-caption"><span data-i18n="dragHint">Drag the marker to explore</span><span class="wheel-degree" id="wheelDegree">204°</span></div>
-            </div>
-            <div class="control-row">
-              <label class="range-control">
-                <span><span data-i18n="saturation">Saturation</span><output id="saturationValue">82%</output></span>
-                <input id="saturation" type="range" min="35" max="100" value="82" />
-              </label>
-              <label class="range-control">
-                <span><span data-i18n="lightness">Lightness</span><output id="lightnessValue">59%</output></span>
-                <input id="lightness" type="range" min="25" max="75" value="59" />
-              </label>
-            </div>
-          </div>
-
-          <div class="panel palette-panel">
-            <div class="panel-heading palette-heading">
-              <div>
-                <span class="panel-kicker" data-i18n="labKicker2">02 / Find a relationship</span>
-                <h2 data-i18n="paletteTitle">Palette builder</h2>
-              </div>
-              <span class="palette-count" id="paletteCount">5 colors</span>
-            </div>
-            <div class="mode-tabs" role="tablist" aria-label="Color harmony">
-              <button class="mode-tab is-selected" type="button" data-mode="complementary" data-i18n="complementary">Complementary</button>
-              <button class="mode-tab" type="button" data-mode="analogous" data-i18n="analogous">Analogous</button>
-              <button class="mode-tab" type="button" data-mode="triadic" data-i18n="triadic">Triadic</button>
-              <button class="mode-tab" type="button" data-mode="split" data-i18n="split">Split</button>
-              <button class="mode-tab" type="button" data-mode="mono" data-i18n="mono">Mono</button>
-            </div>
-            <div class="swatches" id="swatches"></div>
-            <div class="palette-note" id="paletteNote"></div>
-          </div>
-        </section>
-
-        <section class="principles" id="principles">
-          <div class="principles-heading">
-            <div class="eyebrow"><span class="eyebrow-line"></span><span data-i18n="principlesEyebrow">Small rules, big difference</span></div>
-            <h2 data-i18n="principlesTitle">Color is a relationship.</h2>
-          </div>
-          <div class="principle-list">
-            <article class="principle-card">
-              <span class="principle-number">01</span>
-              <h3 data-i18n="principle1Title">Hue is the family.</h3>
-              <p data-i18n="principle1Copy">Red, blue, and everything in between. Hue is where a color lives on the wheel.</p>
-            </article>
-            <article class="principle-card">
-              <span class="principle-number">02</span>
-              <h3 data-i18n="principle2Title">Saturation is the voice.</h3>
-              <p data-i18n="principle2Copy">Turn it up for a vivid shout. Turn it down for a quiet, dusty conversation.</p>
-            </article>
-            <article class="principle-card">
-              <span class="principle-number">03</span>
-              <h3 data-i18n="principle3Title">Lightness is the space.</h3>
-              <p data-i18n="principle3Copy">Lightness sets the atmosphere — from deep shadow to sunlit color.</p>
-            </article>
-          </div>
-        </section>
-      </main>
-
-      <footer class="footer">
-        <span>HUE / НЮАНС</span>
-        <span data-i18n="footerCopy">A small studio for better color decisions.</span>
-      </footer>
+      </div>
     </div>
-    <script src="/app.js"></script>
-  </body>
+  </div>
+
+  <div style="display:{{ theoryDisplay }}">
+    <dc-import name="Color Theory" embedded="{{ true }}" lang="{{ lang }}" theme="{{ theme }}" hint-size="100%,900px"></dc-import>
+  </div>
+  <div style="display:{{ practiceDisplay }}">
+    <dc-import name="Color Theory Lesson" embedded="{{ true }}" lang="{{ lang }}" theme="{{ theme }}" big="{{ big }}" hint-size="100%,900px"></dc-import>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultLang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;bg&quot;,&quot;en&quot;],&quot;default&quot;:&quot;bg&quot;,&quot;tsType&quot;:&quot;'bg' | 'en'&quot;}}">
+const TXT = {
+  bg: { title:'Теория на цветовете', theory:'Теория', practice:'Практика', projector:'Прожектор', theme:'Смени темата' },
+  en: { title:'Colour theory', theory:'Theory', practice:'Practice', projector:'Projector', theme:'Switch theme' }
+};
+
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = { lang:'bg', theme:'light', mode:0, big:false };
+  }
+
+  componentDidMount(){
+    try{
+      const raw = localStorage.getItem('ct_hub');
+      if(raw){ const p = JSON.parse(raw);
+        this.setState(s => ({ lang:p.lang||s.lang, theme:p.theme||s.theme, mode:typeof p.mode==='number'?p.mode:s.mode, big:!!p.big })); }
+    }catch(e){}
+  }
+
+  componentDidUpdate(){
+    const s = this.state;
+    try{ localStorage.setItem('ct_hub', JSON.stringify({ lang:s.lang, theme:s.theme, mode:s.mode, big:s.big })); }catch(e){}
+  }
+
+  renderVals(){
+    const s = this.state, t = TXT[s.lang], dark = s.theme === 'dark';
+    const bgc = dark ? '#101318' : '#FBF8F1';
+    const ink = dark ? '#F2EFE9' : '#14181D';
+    const ink2 = dark ? '#AEB6C2' : '#4C5560';
+    const line = dark ? '#272D37' : '#E4DED1';
+
+    const tab = (label, i) => ({ label,
+      select: () => this.setState({ mode: i }),
+      style: `height:34px;padding:0 18px;border:1px solid ${s.mode===i?ink:line};border-radius:999px;background:${s.mode===i?ink:'transparent'};color:${s.mode===i?bgc:ink2};font-family:'Instrument Sans',system-ui,sans-serif;font-size:14px;font-weight:500;cursor:pointer` });
+
+    const pill = on => `height:30px;padding:0 13px;border:none;cursor:pointer;font-family:'Instrument Sans',system-ui,sans-serif;font-size:12px;letter-spacing:.06em;background:${on?ink:'transparent'};color:${on?bgc:ink2}`;
+
+    return {
+      rootStyle: `background:${bgc};color:${ink};min-height:100vh;font-family:'Instrument Sans',system-ui,sans-serif`,
+      title: t.title, bgc, line, lang: s.lang, theme: s.theme, big: s.big,
+      modes: [tab(t.theory, 0), tab(t.practice, 1)],
+      isPractice: s.mode === 1,
+      theoryDisplay: s.mode === 0 ? 'block' : 'none',
+      practiceDisplay: s.mode === 1 ? 'block' : 'none',
+      langBgStyle: pill(s.lang === 'bg'), langEnStyle: pill(s.lang === 'en'),
+      setBg: () => this.setState({ lang:'bg' }), setEn: () => this.setState({ lang:'en' }),
+      themeLabel: t.theme,
+      toggleTheme: () => this.setState({ theme: dark ? 'light' : 'dark' }),
+      themeBtnStyle: `width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid ${line};border-radius:999px;background:transparent;color:inherit;cursor:pointer`,
+      themeDotStyle: `width:12px;height:12px;border-radius:50%;background:${dark?ink:'transparent'};border:1.5px solid ${ink2}`,
+      projectorLabel: t.projector,
+      toggleBig: () => this.setState({ big: !s.big }),
+      bigStyle: `height:34px;padding:0 14px;border:1px solid ${s.big?ink:line};border-radius:999px;background:${s.big?ink:'transparent'};color:${s.big?bgc:ink2};font-family:'Instrument Sans',system-ui,sans-serif;font-size:13px;cursor:pointer`
+    };
+  }
+}
+</script>
+</body>
 </html>
+
